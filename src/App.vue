@@ -7,6 +7,7 @@
       <b-nav-item to="/student" exact-active-class="active"> Student </b-nav-item> |
       <!--  Add Nav item for Student View -->
       <b-nav-item to="/product" exact-active-class="active"> Product </b-nav-item>
+      <b-nav-item to="/character" exact-active-class="active"> Character </b-nav-item>
     </b-nav>
     <router-view class="container-xl"/>
   </div>

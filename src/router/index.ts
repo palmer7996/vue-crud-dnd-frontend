@@ -30,6 +30,12 @@ const routes: Array<RouteConfig> = [
     name: 'Product',
     component: () => import('../views/ProductView.vue'),
   },
+
+  {
+    path: '/character',
+    name: 'Character',
+    component: () => import('../views/CharacterView.vue'),
+  },
 ];
 
 const router = new VueRouter({
