@@ -9,9 +9,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Mixins, Vue } from 'vue-property-decorator';
 import HelloWorld from '@/components/HelloWorld.vue';
-import IconButton from '@/components/IconButton.vue'; // @ is an alias to /src
+import IconButton from '@/components/IconButton.vue';
+import GlobalMixin from '@/mixins/global-mixin'; // @ is an alias to /src
 
 @Component({
   components: {
@@ -19,7 +20,7 @@ import IconButton from '@/components/IconButton.vue'; // @ is an alias to /src
     HelloWorld,
   },
 })
-export default class HomeView extends Vue {
+export default class HomeView extends Mixins(GlobalMixin) {
   // eslint-disable-next-line class-methods-use-this
   showMessage(msg:string):void {
     alert(msg);

@@ -8,10 +8,18 @@
 
 // mixins.js
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import User from '@/models/User';
 
+// for the json db
 const BASE_API = 'http://localhost:3006';
 const STUDENT_API = `${BASE_API}/students`;
 const PRODUCT_API = `${BASE_API}/products`;
+
+const BACKEND_BASE_API = 'http://localhost:3004';
+const CHARACTER_API = `${BACKEND_BASE_API}/characters`;
+const RACE_API = `${BACKEND_BASE_API}/info/races`;
+const CLASS_API = `${BACKEND_BASE_API}/info/classes`;
+const USER_API = `${BACKEND_BASE_API}/users`;
 
 const FETCH_HEADERS:any = {
   'X-Requested-With': 'XmlHttpRequest',
@@ -24,12 +32,28 @@ export default class GlobalMixin extends Vue {
 
   @Prop(Boolean) readonly disabled!:boolean
 
+  // declare user property in here? could help with later fetch calls?
+  // @Prop(User)
+
+  userData = {}; // add accesslevel and bearer token to this, maybe id of user too,
+  // just don't add entire user object too unsecure passing around password and token
+
   // immutable constant data variables
   BASE_API = BASE_API
 
   STUDENT_API = STUDENT_API
 
   PRODUCT_API = PRODUCT_API
+
+  BACKEND_BASE_API = BACKEND_BASE_API
+
+  CHARACTER_API = CHARACTER_API
+
+  RACE_API = RACE_API
+
+  CLASS_API = CLASS_API
+
+  USER_API = USER_API
 
   // regular data variable
   isBusy = false

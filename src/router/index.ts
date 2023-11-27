@@ -11,12 +11,12 @@ const routes: Array<RouteConfig> = [
     component: HomeView,
   },
   {
-    path: '/about',
-    name: 'about',
+    path: '/login',
+    name: 'login',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+    component: () => import('../views/LoginView.vue'),
   },
   /** *******   Add route item for Student View  ********* */
   {
@@ -36,6 +36,17 @@ const routes: Array<RouteConfig> = [
     name: 'Character',
     component: () => import('../views/CharacterView.vue'),
   },
+  {
+    path: '/class',
+    name: 'Class',
+    component: () => import('../views/ClassView.vue'),
+  },
+  /*   {
+    path: '/race',
+    name: 'Race',
+    component: () => import('../views/CharacterView.vue'),
+  }, */
+
 ];
 
 const router = new VueRouter({
