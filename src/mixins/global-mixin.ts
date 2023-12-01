@@ -26,6 +26,8 @@ const FETCH_HEADERS:any = {
   'Content-Type': 'application/json; charset=utf-8',
 };
 
+const userData:any = {};
+
 @Component
 export default class GlobalMixin extends Vue {
   @Prop(Boolean) readonly debug!:boolean
@@ -35,7 +37,10 @@ export default class GlobalMixin extends Vue {
   // declare user property in here? could help with later fetch calls?
   // @Prop(User)
 
-  userData = {}; // add accesslevel and bearer token to this, maybe id of user too,
+  userData = {
+    accessLevel: 'read',
+    token: '',
+  }; // add accesslevel and bearer token to this, maybe id of user too,
   // just don't add entire user object too unsecure passing around password and token
 
   // immutable constant data variables
@@ -53,7 +58,7 @@ export default class GlobalMixin extends Vue {
 
   CLASS_API = CLASS_API
 
-  USER_API = USER_API
+  USER_API = USER_API // for login
 
   // regular data variable
   isBusy = false
@@ -83,7 +88,7 @@ export default class GlobalMixin extends Vue {
       method: 'GET',
       credentials: 'include', // allows api to set cookies in the browser
       referrerPolicy: 'strict-origin-when-cross-origin',
-      headers: { ...FETCH_HEADERS },
+      headers: { ...FETCH_HEADERS, Authorization: `Bearer ${this.userData.token}` }, // added token to the fetch to test
     };
     // ensure valid/allowed request methods
     // eslint-disable-next-line no-param-reassign

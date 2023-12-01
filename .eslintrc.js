@@ -33,6 +33,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'no-alert': 'off',
-    /*     'max-length': 'off', */
+    'max-len': 'off',
   },
 };
