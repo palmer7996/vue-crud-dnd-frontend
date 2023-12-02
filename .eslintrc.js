@@ -34,5 +34,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'no-alert': 'off',
     'max-len': 'off',
+    'linebreak-style': 'off',
   },
 };
