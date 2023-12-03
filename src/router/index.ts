@@ -40,6 +40,7 @@ const routes: Array<RouteConfig> = [
     path: '/class',
     name: 'Class',
     component: () => import('../views/ClassView.vue'),
+    meta: { requiresAdminAccessLevel: true }, // require authentication to access the class or race routes
   },
   /*   {
     path: '/race',
@@ -51,6 +52,26 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+  // Check if the route requires authentication
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (to.meta.requiresAdminAccessLevel) {
+    // Check if the user is not authenticated or does not have admin access level
+    if (!userData || userData.accessLevel !== 'admin') {
+      // Redirect to login
+      next({ name: 'login' }); // Assuming your login route is named 'login'
+      console.log(userData);
+      return; // Add return to exit the guard function
+    }
+  }
+
+  // Continue with the navigation
+  next();
 });
 
 export default router;

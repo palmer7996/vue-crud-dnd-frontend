@@ -26,8 +26,6 @@ const FETCH_HEADERS:any = {
   'Content-Type': 'application/json; charset=utf-8',
 };
 
-const userData:any = {};
-
 @Component
 export default class GlobalMixin extends Vue {
   @Prop(Boolean) readonly debug!:boolean
@@ -40,8 +38,25 @@ export default class GlobalMixin extends Vue {
   userData = {
     accessLevel: 'read',
     token: '',
-  }; // add accesslevel and bearer token to this, maybe id of user too,
-  // just don't add entire user object too unsecure passing around password and token
+  }; // utilizing the token in the callAPI method
+
+  // currently storing userData inside localStorage, could modify to use vuex or some other implementation
+  saveUserData(accessLevel:string, token:string) {
+    this.userData.accessLevel = accessLevel;
+    this.userData.token = token;
+    localStorage.setItem('userData', JSON.stringify(this.userData));
+  }
+
+  loadUserData() {
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      this.userData = JSON.parse(storedUserData);
+    }
+  }
+
+  created() {
+    this.loadUserData();
+  }
 
   // immutable constant data variables
   BASE_API = BASE_API
@@ -108,6 +123,9 @@ export default class GlobalMixin extends Vue {
 
         const error = new Error(`${res.status}: ${res.statusText}`);
         resInfo.data = await res.json();
+        console.log('---Response info---');
+        console.log(resInfo);
+        console.log('---Response info end---');
         throw Object.assign(error, resInfo);
       });
   }

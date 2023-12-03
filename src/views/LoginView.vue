@@ -23,8 +23,10 @@
                   placeholder="Enter your password"
                 ></b-form-input>
               </b-form-group>
-
+              <b-button @click="logout" variant="danger">Log Out</b-button>
+              <b-button @click="checkAccount">User Info</b-button>
               <b-button type="submit" variant="primary">Login</b-button>
+
             </b-form>
           </b-card>
         </b-col>
@@ -44,22 +46,27 @@ export default class LoginView extends Mixins(GlobalMixin) {
     password: '',
   }
 
+  checkAccount() {
+    alert(`Your access level is: ${this.userData.accessLevel}`);
+  }
+
+  // reset the userData to the default
+  logout() {
+    this.saveUserData('read', '');
+  }
+
   login() {
-    // console.log('Logging in with:');
-
-    console.log('Logging in with:', this.userLogin);
-
+    console.log(`Logging in with: ${this.userLogin.username} and ${this.userLogin.password}`);
     // this should make an api request to the backend server
-
     this.callAPI(this.USER_API, 'POST', this.userLogin) // returns a promise object
       .then((data) => {
         // assign to the userData global object
-        this.userData.token = data.token;
-        this.userData.accessLevel = data.accessLevel;
+        this.saveUserData(data.accessLevel, data.token);
+        alert('Login successful!');
       })
-      .catch((err) => {
-        // get the violation messages from the api - if the web server responded
-        // this.violation = err.data || {};
+      .catch((error) => {
+        alert(`${error.data.message}`);
+        console.error('Error during login:', error.data);
       })
       .finally(() => {
         this.setBusy(false);// tell parent that this component is no longer waiting for the api

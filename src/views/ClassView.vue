@@ -8,7 +8,7 @@ or use components for them to reuse-->
     <div v-else>
       <b-row>
         <b-col v-for="item in dndClasses" :key="item.id" lg="4" md="6" sm="12" class="mb-2">
-          <b-card style="max-width: 20rem;" @click="selectCard(item)" :class="{'selected-card': tempDndClass === item}">
+          <b-card style="max-width: 20rem;" @click="selectCard(item)" :class="{'selected-card': tempDndClass.name === item.name}">
             <b-card-body >
               <p class="card-text">Name: {{ item.name }}</p>
               <p class="card-text">hitDie: {{ item.hitDie }}</p>
@@ -46,8 +46,8 @@ or use components for them to reuse-->
             <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.hD">
               <b-icon-dice2 :title="dt.hD" />
             </b-input-group-prepend>
-
-            <b-form-input :placeholder="dt.hD" v-model="tempDndClass.hitDie"/>
+            <!--            implementing max and mins for hitdie-->
+            <b-form-input type="number" :min="hitDieMin" :max="hitDieMax" :placeholder="dt.hD" v-model.number="tempDndClass.hitDie"/>
           </b-input-group>
         </b-form-group>
 
@@ -77,15 +77,16 @@ or use components for them to reuse-->
           modify the buttons that appear in the footer of the modal using pre-defined slots-->
         <template #modal-cancel>
           <!-- add a X icon to the cancel button-->
-          <b-icon-x-square-fill /> Cancel
+          <b-icon-stop /> Cancel
         </template>
 
         <template #modal-ok>
           <!-- change the OK button to say Delete instead and add a trash can icon-->
-          <b-icon-trash-fill /> Delete
+          <b-icon-person-x-fill /> Delete
         </template>
         Are you sure you want to delete {{tempDndClass.name}}?
       </b-modal>
+
     </div>
   </div>
 
@@ -100,6 +101,10 @@ import { BIcon } from 'bootstrap-vue';
 
 @Component
 export default class ClassView extends Mixins(GlobalMixin) {
+  hitDieMin = 4;
+
+  hitDieMax = 14;
+
   loading = true;
 
   showCreateModal = false
@@ -120,7 +125,7 @@ export default class ClassView extends Mixins(GlobalMixin) {
   violation: any = {}
 
   selectCard(item : DndClass) {
-    if (this.tempDndClass === item) {
+    if (this.tempDndClass.name === item.name) {
       // clicking on a card selected unselects it
       this.tempDndClass = new DndClass();
     } else {
@@ -145,13 +150,14 @@ export default class ClassView extends Mixins(GlobalMixin) {
 
     this.callAPI(this.CLASS_API, 'POST', this.tempDndClass) // returns a promise object
       .then((data) => {
-        // determine if the student was added or updated
-        // need to edit backend for this to work
+        // determine if the class was added or updated
         this.$emit(this.tempDndClass.id === data.id ? 'updated' : 'added', data);
+        this.refreshDndClasses();
       })
-      .catch((err) => {
+      .catch((error) => {
         // get the violation messages from the api - if the web server responded
-        this.violation = err.data || {};
+        console.log(error.data[0]?.constraints);
+        this.violation = error.data || {};
       })
       .finally(() => {
         this.setBusy(false);// tell parent that this component is no longer waiting for the api
@@ -170,13 +176,19 @@ export default class ClassView extends Mixins(GlobalMixin) {
       .then((res) => {
         this.tempDndClass = new DndClass();
         this.$emit('deleted', this.tempDndClass);// tell parent student was deleted
+        this.refreshDndClasses();
       })
-      .catch(() => {
-        this.$emit('reset', this.tempDndClass);
+      .catch((error) => {
+        console.error(error.data[0]?.constraints);
+        // this.$emit('reset', this.tempDndClass);
       })
       .finally(() => {
         this.setBusy(false);// tell parent that this component is no longer waiting for the api
       });
+  }
+
+  async refreshDndClasses() {
+    await this.fetchFromBackend();
   }
 
   // getting the data from the backend database
