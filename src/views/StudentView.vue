@@ -41,7 +41,7 @@ USING short cuts:
       <!--    show the overlay if the component is busy or disabled-->
       <b-overlay :show="isDisabled" opacity=".25" class="col-md-6 col-lg-8 order-md-0">
         <b-table ref="studentTable" responsive
-                 :items="provider" :fields="fields" :api-url="STUDENT_API" @row-clicked="selectedStudent=$event"
+                 :items="providerOld" :fields="fields" :api-url="STUDENT_API" @row-clicked="selectedStudent=$event"
                  selectable select-mode="single" selected-variant="primary" striped hover primary-key="id"
                  no-provider-sorting no-provider-paging no-provider-filtering>
           <template #table-busy>
@@ -85,7 +85,7 @@ export default class StudentView extends Mixins(GlobalMixin) {
     studentTable: BTable
   }
 
-  provider(ctx:BvTableCtxObject):Promise<any> {
+  async providerOld(ctx:BvTableCtxObject):Promise<any> {
     // return fetch('' + ctx.apiUrl).then(res => res.json())
     return this.callAPI(`${ctx.apiUrl}`);
   }

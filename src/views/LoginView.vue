@@ -69,11 +69,9 @@ export default class LoginView extends Mixins(GlobalMixin) {
         console.error('Error during login:', error.data);
       })
       .finally(() => {
-        this.setBusy(false);// tell parent that this component is no longer waiting for the api
+        this.setBusy(false);
         console.log(this.userData);
       });
-
-    // then add to the userData global variable
   }
 }
 </script>

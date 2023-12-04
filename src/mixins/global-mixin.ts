@@ -32,9 +32,27 @@ export default class GlobalMixin extends Vue {
 
   @Prop(Boolean) readonly disabled!:boolean
 
+  // immutable constant data variables
+  BASE_API = BASE_API
+
+  STUDENT_API = STUDENT_API
+
+  PRODUCT_API = PRODUCT_API
+
+  BACKEND_BASE_API = BACKEND_BASE_API
+
+  CHARACTER_API = CHARACTER_API
+
+  RACE_API = RACE_API
+
+  CLASS_API = CLASS_API
+
+  USER_API = USER_API // for login
+
+  //-------------------------------------------------------
   // declare user property in here? could help with later fetch calls?
   // @Prop(User)
-
+  // user login and saving user data functionality
   userData = {
     accessLevel: 'read',
     token: '',
@@ -57,23 +75,32 @@ export default class GlobalMixin extends Vue {
   created() {
     this.loadUserData();
   }
+  //-------------------------------------------------------
 
-  // immutable constant data variables
-  BASE_API = BASE_API
+  //-------------------------------------------------------
+  // variables used by the views for creating and deleting elements
+  violation: any = {}
 
-  STUDENT_API = STUDENT_API
+  boolCreateFormModal = false
 
-  PRODUCT_API = PRODUCT_API
+  boolDeleteConfirmModal = false;
 
-  BACKEND_BASE_API = BACKEND_BASE_API
+  showCreateFormModal() {
+    this.boolCreateFormModal = true;
+  }
 
-  CHARACTER_API = CHARACTER_API
+  showDeleteConfirmModal() {
+    this.boolDeleteConfirmModal = true;
+  }
 
-  RACE_API = RACE_API
-
-  CLASS_API = CLASS_API
-
-  USER_API = USER_API // for login
+  async provider(apiLink:string): Promise<any> {
+    this.setBusy(true);
+    // fetch from the backend prj3 server use the variable set in globalmixins
+    const res = await fetch(apiLink);
+    this.setBusy(false);
+    return res.json();
+  }
+  //-------------------------------------------------------
 
   // regular data variable
   isBusy = false
@@ -99,6 +126,7 @@ export default class GlobalMixin extends Vue {
 
   // function that will determine which request method and how to send the data to the api
   callAPI(url:string, method = 'get', dataToSend = {}) {
+    this.setBusy(true);
     const fetchOptions: any = {
       method: 'GET',
       credentials: 'include', // allows api to set cookies in the browser

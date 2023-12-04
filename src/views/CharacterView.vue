@@ -1,90 +1,157 @@
 <template>
   <div>
-    <h1>Products</h1>
-    <!--    <b-table :items="provider"></b-table>-->
+    <h1>Classes</h1>
+    <div v-if="isBusy">Loading...</div>
+    <div v-else>
+      <b-row>
+        <b-col v-for="item in dndCharacters" :key="item.id" lg="6" md="6" sm="12" class="mb-2">
+          <b-card @click="selectCard(item)" :class="{'border-primary': selCharacter.id === item.id}">
+            <b-card-body >
+              <h4 class="mb-4 font-weight-bold">{{ item.name }}</h4>
 
-    <div id="app" class="container mt-4">
-      <div class="row">
-        <b-card v-for="product in products" :key="product.id" class="col-md-4 mb-4">
-          <!-- Customize the content inside the card based on your 'product' structure -->
-          <b-card-title>{{ product.name }}</b-card-title>
-          <b-card-sub-title>{{ product.size }}</b-card-sub-title>
-          <b-card-text>ID: {{ product.id }}</b-card-text>
-          <b-card-text>
-            <span>Attribute 1: {{ product.attribute1 }}</span>
-            <span class="ml-2">Attribute 2: {{ product.attribute2 }}</span>
-            <span class="ml-2">Attribute 3: {{ product.attribute3 }}</span>
-          </b-card-text>
-          <b-card-text>
-            <span>Attribute 4: asdf</span>
-            <span class="ml-2">Attribute 5: asdf</span>
-            <span class="ml-2">Attribute 6: asdf</span>
-          </b-card-text>
+              <!-- Details in columns -->
+              <b-row>
+                <b-col md="6">
+                  <p class="card-text">Age: {{ item.age }}</p>
+                  <p class="card-text">Gender: {{ item.gender }}</p>
+                  <p class="card-text">Date Created: {{ formatDate(item.dateCreated) }}</p>
+                </b-col>
+                <b-col md="6">
+                  <p class="card-text">Class: {{ item.class }}</p>
+                  <p class="card-text">Race: {{ item.race }}</p>
+                  <p class="card-text">Alignment: {{ item.alignment }}</p>
 
-          <!-- Edit and Delete buttons -->
-          <b-button @click="editProduct(product)" variant="primary">Edit</b-button>
-          <b-button @click="deleteProduct(product.id)" variant="danger">Delete</b-button>
-        </b-card>
+                </b-col>
+              </b-row>
+
+              <p class="card-text my-3" v-if="item.description">Description: {{ item.description }}</p>
+
+              <!-- display stats only if it has an attribute -->
+              <b-row>
+                <b-col md="6">
+                  <p class="card-text" v-if="item.strength">Strength: {{ item.strength }}</p>
+                  <p class="card-text" v-if="item.dexterity">Dexterity: {{ item.dexterity }}</p>
+                  <p class="card-text" v-if="item.constitution">Constitution: {{ item.constitution }}</p>
+                </b-col>
+                <b-col md="6">
+                  <p class="card-text" v-if="item.intelligence">Intelligence: {{ item.intelligence }}</p>
+                  <p class="card-text" v-if="item.wisdom">Wisdom: {{ item.wisdom }}</p>
+                  <p class="card-text" v-if="item.charisma">Charisma: {{ item.charisma }}</p>
+                </b-col>
+              </b-row>
+
+              <!--              implement the rest of them-->
+            </b-card-body>
+          </b-card>
+        </b-col>
+      </b-row>
+      <div>
+        <b-button-group class="fixed-bottom d-flex justify-content-between">
+          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal">
+            Create/Edit</b-button>
+          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal">
+            Delete</b-button>
+        </b-button-group>
+
       </div>
+
+      <!--      MODAL FORM-->
+      <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
+               @ok="createCharacter" v-model="boolCreateFormModal">
+
+        <!--form component for character goes here-->
+
+        <template #modal-cancel>
+          <b-icon-stop /> Cancel
+        </template>
+        <template #modal-ok>
+          <b-icon-person-plus-fill />
+          {{ selCharacter.id ? 'Edit' : 'Create' }}
+        </template>
+      </b-modal>
+
+      <b-modal title="Delete Student" ok-variant="danger" cancel-variant="primary"
+               @ok="deleteCharacter" v-model="boolDeleteConfirmModal">
+        <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
+                  slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
+                  modify the buttons that appear in the footer of the modal using pre-defined slots-->
+        <template #modal-cancel>
+          <!-- add a X icon to the cancel button-->
+          <b-icon-stop /> Cancel
+        </template>
+
+        <template #modal-ok>
+          <!-- change the OK button to say Delete instead and add a trash can icon-->
+          <b-icon-person-x-fill /> Delete
+        </template>
+        Are you sure you want to delete {{ selCharacter.name }}?
+      </b-modal>
+
     </div>
-
-    <!--    <div id="app" class="container mt-4">-->
-    <!--      <div class="row">-->
-    <!--        <b-card v-for="item in provider" :key="item.id" class="col-md-4 mb-4">-->
-    <!--          &lt;!&ndash; Customize the content inside the card based on your
-    'item' structure &ndash;&gt;-->
-    <!--          <template #header>-->
-    <!--            <h4 class="mb-0">{{ item.name }}</h4>-->
-    <!--          </template>-->
-
-    <!--          <b-card-body>-->
-    <!--            <b-card-text>{{ item.size }}</b-card-text>-->
-    <!--          </b-card-body>-->
-
-    <!--          &lt;!&ndash;          <b-list-group flush>&ndash;&gt;-->
-    <!--          &lt;!&ndash;            <b-list-group-item v-for="(value, key) in item.attributes"
-    :key="key">&ndash;&gt;-->
-    <!--          &lt;!&ndash;              <strong>{{ key }}:</strong> {{ value }}&ndash;&gt;-->
-    <!--          &lt;!&ndash;            </b-list-group-item>&ndash;&gt;-->
-    <!--          &lt;!&ndash;          </b-list-group>&ndash;&gt;-->
-
-    <!--          <b-card-footer>{{ item.price }}</b-card-footer>-->
-    <!--        </b-card>-->
-    <!--      </div>-->
-    <!--    </div>-->
   </div>
 
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { BvTableCtxObject } from 'bootstrap-vue/src/components/table';
+import { Component, Mixins } from 'vue-property-decorator';
+import GlobalMixin from '@/mixins/global-mixin';
+import Character from '@/models/Character';
 
 @Component
-export default class Product extends Vue {
-  products: any;
+export default class Product extends Mixins(GlobalMixin) {
+  dndCharacters: Character[] = [];
 
-  // fetch from the proj3 server
-  // Initialize products array
-  data() {
-    return {
-      products: [],
+  selCharacter: Character = new Character();
+
+  formatDate(dateString: Date) {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     };
+    return new Date(dateString).toLocaleDateString('en-US', options);
   }
 
-  // ctx:BvTableCtxObject
-  provider() {
-    return fetch('http://localhost:3006/products')
-      .then((res) => res.json())
-      .then((data) => {
-        this.products = data;
-        return data;
-      });
+  createCharacter() {
+    console.log('create');
   }
 
-  // Call provider on component mount
+  deleteCharacter() {
+    console.log('delete');
+  }
+
+  selectCard(item : Character) {
+    if (this.selCharacter.id === item.id) {
+      this.selCharacter = new Character();
+    } else {
+      this.selCharacter = Object.assign(new Character(), item);
+    }
+    console.log(this.selCharacter);
+  }
+
+  async refreshCards() {
+    await this.fetchFromBackend();
+  }
+
+  // getting the data from the backend database
   mounted() {
-    this.provider();
+    this.fetchFromBackend();
+  }
+
+  async fetchFromBackend() {
+    try {
+      const data = await this.provider(this.CHARACTER_API);
+      this.dndCharacters = data.characters;
+      console.log(this.dndCharacters);
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+    }
   }
 }
 </script>
+<style scoped>
+
+</style>

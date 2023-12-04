@@ -1,10 +1,12 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome Buddies"/>
-    <IconButton icon="discord" @party="showMessage('THIS IS FUN')"
+    <h1>Dnd Character Creator</h1>
+    <!--    <HelloWorld msg="Dnd Character Creator"/>-->
+    <!--    <IconButton icon="discord" @party="showMessage('THIS IS FUN')"
                 animation-style="spin" :animate="true">
-      Anther Fun Button</IconButton>
+      Anther Fun Button</IconButton>-->
+
   </div>
 </template>
 
