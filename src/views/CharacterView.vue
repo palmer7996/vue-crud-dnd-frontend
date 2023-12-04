@@ -12,6 +12,7 @@
               <!-- Details in columns -->
               <b-row>
                 <b-col md="6">
+                  <!--                  <p class="card-text">Item Info: {{ item }}</p>-->
                   <p class="card-text">Age: {{ item.age }}</p>
                   <p class="card-text">Gender: {{ item.gender }}</p>
                   <p class="card-text">Date Created: {{ formatDate(item.dateCreated) }}</p>
@@ -58,8 +59,13 @@
       <!--      MODAL FORM-->
       <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
                @ok="createCharacter" v-model="boolCreateFormModal">
-
-        <!--form component for character goes here-->
+        <CharacterForm debug
+                       :character="selCharacter" :disabled="isDisabled" @busy="setBusy"
+        />
+        <!--        shouldn't need to pass any of these because the add, and delete are handled in the view-->
+        <!--        class="col-md- col-lg-4 order-md-1 pl-lg-0 "-->
+        <!--        @added="handleAdd" @updated="handleUpdate" @deleted="handleDelete"-->
+        <!--        @cancelled="handleCancel" @reset="handleReset"-->
 
         <template #modal-cancel>
           <b-icon-stop /> Cancel
@@ -70,7 +76,7 @@
         </template>
       </b-modal>
 
-      <b-modal title="Delete Student" ok-variant="danger" cancel-variant="primary"
+      <b-modal title="Delete Character" ok-variant="danger" cancel-variant="primary"
                @ok="deleteCharacter" v-model="boolDeleteConfirmModal">
         <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
                   slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
@@ -96,8 +102,11 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import GlobalMixin from '@/mixins/global-mixin';
 import Character from '@/models/Character';
+import CharacterForm from '@/components/CharacterForm.vue';
 
-@Component
+@Component({
+  components: { CharacterForm },
+})
 export default class Product extends Mixins(GlobalMixin) {
   dndCharacters: Character[] = [];
 

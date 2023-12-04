@@ -24,7 +24,6 @@ or use components for them to reuse-->
           <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal">
             Delete</b-button>
         </b-button-group>
-
       </div>
 
       <!--      MODAL FORM-->
@@ -99,7 +98,8 @@ import {
 } from 'vue-property-decorator';
 import GlobalMixin from '@/mixins/global-mixin';
 import DndClass from '@/models/DndClass';
-import { BIcon } from 'bootstrap-vue';
+import { validate, ValidationError } from 'class-validator';
+import ViolationClass from '@/models/ViolationClass';
 
 @Component
 export default class ClassView extends Mixins(GlobalMixin) {
@@ -128,7 +128,7 @@ export default class ClassView extends Mixins(GlobalMixin) {
 
   dndClasses: DndClass[] = [];
 
-  @Prop({ type: Object, validator: (s) => s instanceof Object }) readonly dndClass: any
+  // @Prop({ type: Object, validator: (s) => s instanceof Object }) readonly dndClass: any
 
   selDndClass: DndClass = new DndClass();
 
@@ -144,11 +144,39 @@ export default class ClassView extends Mixins(GlobalMixin) {
     console.log(this.selDndClass);
   }
 
-  createClass() {
-    console.log(this.selDndClass);
-    this.setBusy(true);
-    // need to do validation
+  async characterValidate(): Promise<boolean> {
+    // Reset violation to get rid of displayed errors for now
+    this.violation = new ViolationClass();
 
+    // DONE validate tempStudent data before sending fetch request
+    const errors = await validate(this.selDndClass);
+    console.log('This is from the validate method:');
+    console.log(errors);
+    if (errors.length > 0) {
+      const temp = new ViolationClass();
+      errors.forEach((vio: ValidationError) => {
+        Object.assign(temp, {
+          [vio.property]: vio.constraints![Object.keys(vio.constraints!)[0]],
+        });
+      });
+
+      console.log(temp);
+      this.violation = temp;
+      return false;
+    }
+    return true; // this is returning true right now?
+  }
+
+  async createClass() {
+    console.log(this.selDndClass);
+
+    // need to do validation
+    if (!await this.characterValidate()) {
+      console.log('early return');
+      return;
+    }
+
+    this.setBusy(true);
     // then just send it to the backend db
 
     this.callAPI(this.CLASS_API, 'POST', this.selDndClass) // returns a promise object

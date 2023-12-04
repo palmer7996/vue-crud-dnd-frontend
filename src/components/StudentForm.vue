@@ -254,11 +254,11 @@ export default class StudentForm extends Mixins(GlobalMixin) {
   get hasErr(): any {
     return { // bootstrap hasErrs used to display violation messages
       // true - green border, false - red border, null- regular border
-      fN: this.violation.familyName ? false : null,
-      gN: this.violation.givenName ? false : null,
-      em: this.violation.email ? false : null,
-      sA: this.violation.address ? false : null,
-      pn: this.violation.phone ? false : null,
+      cN: this.violation.familyName ? false : null,
+      aG: this.violation.givenName ? false : null,
+      gN: this.violation.email ? false : null,
+      cL: this.violation.address ? false : null,
+      rC: this.violation.phone ? false : null,
     };
   }
 

@@ -126,7 +126,7 @@ export default class GlobalMixin extends Vue {
 
   // function that will determine which request method and how to send the data to the api
   callAPI(url:string, method = 'get', dataToSend = {}) {
-    this.setBusy(true);
+    // this.setBusy(true);
     const fetchOptions: any = {
       method: 'GET',
       credentials: 'include', // allows api to set cookies in the browser
@@ -151,9 +151,12 @@ export default class GlobalMixin extends Vue {
 
         const error = new Error(`${res.status}: ${res.statusText}`);
         resInfo.data = await res.json();
+        /*
         console.log('---Response info---');
         console.log(resInfo);
         console.log('---Response info end---');
+        */
+
         throw Object.assign(error, resInfo);
       });
   }
