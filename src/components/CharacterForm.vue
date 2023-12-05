@@ -35,7 +35,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
 <template>
   <div>
     <!-- NAME -->
-    <b-form-group :invalid-feedback="violation.name" :state="hasErr.fN" class="mb-1">
+    <b-form-group :invalid-feedback="violation.name" :state="hasErr.cN" class="mb-1">
       <b-input-group>
         <!--    tooltip hovers to the right of the prepend div-->
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.cN">
@@ -43,7 +43,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-person-fill :title="dt.cN" />
         </b-input-group-prepend>
 
-        <b-form-input :placeholder="dt.cN" :state="hasErr.fN" :disabled="isDisabled"
+        <b-form-input :placeholder="dt.cN" :state="hasErr.cN" :disabled="isDisabled"
                       v-model="tempCharacter.name" trim @keydown="violation.name=null" />
       </b-input-group>
     </b-form-group>
@@ -54,8 +54,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.aG">
           <b-icon-calendar-event :title="dt.aG" />
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.aG" :state="hasErr.aG" :disabled="isDisabled"
-                      v-model="tempCharacter.age" trim @keydown="violation.age=null" />
+        <b-form-input type="number" :placeholder="dt.aG" :state="hasErr.aG" :disabled="isDisabled"
+                      v-model.number="tempCharacter.age" trim @keydown="violation.age=null" />
       </b-input-group>
     </b-form-group>
 
@@ -121,8 +121,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice1 :title="dt.sT" />
           <span class="ml-2">{{dt.sT}}:</span>
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.sT" :state="hasErr.sT" :disabled="isDisabled"
-                      v-model="tempCharacter.strength" trim @keydown="violation.strength=null" />
+        <b-form-input type="number" :placeholder="dt.sT" :state="hasErr.sT" :disabled="isDisabled"
+                      v-model.number="tempCharacter.strength" trim @keydown="violation.strength=null" />
       </b-input-group>
     </b-form-group>
 
@@ -133,8 +133,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice2 :title="dt.dX" />
           <span class="ml-2">{{dt.dX}}:</span>
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.dX" :state="hasErr.dX" :disabled="isDisabled"
-                      v-model="tempCharacter.dexterity" trim @keydown="violation.dexterity=null" />
+        <b-form-input type="number" :placeholder="dt.dX" :state="hasErr.dX" :disabled="isDisabled"
+                      v-model.number="tempCharacter.dexterity" trim @keydown="violation.dexterity=null" />
       </b-input-group>
     </b-form-group>
 
@@ -145,8 +145,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice3 :title="dt.cT" />
           <span class="ml-2">{{dt.cT}}:</span>
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.cT" :state="hasErr.cT" :disabled="isDisabled"
-                      v-model="tempCharacter.constitution" trim @keydown="violation.constitution=null" />
+        <b-form-input type="number" :placeholder="dt.cT" :state="hasErr.cT" :disabled="isDisabled"
+                      v-model.number="tempCharacter.constitution" trim @keydown="violation.constitution=null" />
       </b-input-group>
     </b-form-group>
 
@@ -157,8 +157,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice4 :title="dt.iT" />
           <span class="ml-2">{{dt.iT}}:</span>
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.iT" :state="hasErr.iT" :disabled="isDisabled"
-                      v-model="tempCharacter.intelligence" trim @keydown="violation.intelligence=null" />
+        <b-form-input type="number" :placeholder="dt.iT" :state="hasErr.iT" :disabled="isDisabled"
+                      v-model.number="tempCharacter.intelligence" trim @keydown="violation.intelligence=null" />
       </b-input-group>
     </b-form-group>
 
@@ -169,8 +169,8 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice5 :title="dt.wS" />
           <span class="ml-2">{{dt.wS}}:</span>
         </b-input-group-prepend>
-        <b-form-input :placeholder="dt.wS" :state="hasErr.wS" :disabled="isDisabled"
-                      v-model="tempCharacter.wisdom" trim @keydown="violation.wisdom=null" />
+        <b-form-input type="number" :placeholder="dt.wS" :state="hasErr.wS" :disabled="isDisabled"
+                      v-model.number="tempCharacter.wisdom" trim @keydown="violation.wisdom=null" />
       </b-input-group>
     </b-form-group>
 
@@ -181,11 +181,23 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-dice6 :title="dt.cA" />
           <span class="ml-2">{{dt.cA}}:</span>
         </b-input-group-prepend>
-        <b-form-input id="chaInput" :placeholder="dt.cA" :state="hasErr.cA" :disabled="isDisabled"
-                      v-model="tempCharacter.charisma" trim @keydown="violation.charisma=null" />
+        <b-form-input type="number" id="chaInput" :placeholder="dt.cA" :state="hasErr.cA" :disabled="isDisabled"
+                      v-model.number="tempCharacter.charisma" trim @keydown="violation.charisma=null" />
 
       </b-input-group>
     </b-form-group>
+
+    <!-- BUTTONS -->
+    <b-button-group class="w-100 mb-3">
+      <b-button variant="danger" :disabled="isDisabled" @click="cancel">
+        <b-icon-x-square-fill /> Cancel</b-button>
+      <!--    save button,  onclick call the saveStudent function
+        disabled prop is bound to the computed property 'isDisabled' -->
+      <b-button variant="primary" :disabled="isDisabled" @click="saveCharacter">
+        <!--    use a cloud icon, add a ref (reference) to this icon as 'iconSave' so we can animate it when saveStudent is called
+            https://vuejs.org/v2/api/#ref -->
+        <b-icon-cloud-arrow-up-fill ref="iconSave" /> Save</b-button>
+    </b-button-group>
 
     <!--    currently replaced all the  @keydown="violation.intelligence=null" with =undefined and changed attributes in ViolationCharacter to ?-->
     <!-- ERROR MESSAGE -->
@@ -254,15 +266,17 @@ export default class CharacterForm extends Mixins(GlobalMixin) {
 
   // region METHODS
   saveCharacter() {
+    //
     console.log('saveCharacter');
+    this.$emit('childSaveCharacter', this.tempCharacter);
+
+    // this.$emit('closeModal');
   }
 
   cancel() {
     console.log('cancel');
-  }
-
-  deleteCharacter() {
-    console.log('deleteCharacter');
+    this.$emit('closeModal');
+    // send emit to the parent to hide the modal
   }
 
   // endregion

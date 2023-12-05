@@ -146,7 +146,7 @@ export default class ClassView extends Mixins(GlobalMixin) {
     console.log(this.selDndClass);
   }
 
-  async validateClass(): Promise<boolean> {
+  async validateClass(selClass : DndClass): Promise<boolean> {
     // Reset violation to get rid of displayed errors for now
     this.violation = new ViolationDndClass();
 
@@ -170,12 +170,12 @@ export default class ClassView extends Mixins(GlobalMixin) {
   }
 
   async createClass(event : BvModalEvent) {
-    event.preventDefault();// want to kep the modal up, didn't work when called inside the if
+    event.preventDefault();// want to keep the modal up, didn't work when called inside the if
 
     console.log(this.selDndClass);
 
     // need to do validation
-    if (!await this.validateClass()) {
+    if (!await this.validateClass(this.selDndClass)) {
       console.log('validation failed');
       return;
     }

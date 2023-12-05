@@ -62,6 +62,7 @@
                @ok="createCharacter" v-model="boolCreateFormModal">
         <CharacterForm debug
                        :character="selCharacter" :disabled="isDisabled" @busy="setBusy" :violation="violation"
+                       @closeModal="showCreateFormModal(false)" @childSaveCharacter="saveCharacterFromChild($event)"
         />
         <!--        shouldn't need to pass any of these because the add, and delete are handled in the view-->
         <!--        class="col-md- col-lg-4 order-md-1 pl-lg-0 "-->
@@ -82,6 +83,7 @@
         <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
                   slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
                   modify the buttons that appear in the footer of the modal using pre-defined slots-->
+
         <template #modal-cancel>
           <!-- add a X icon to the cancel button-->
           <b-icon-stop /> Cancel
@@ -91,6 +93,7 @@
           <!-- change the OK button to say Delete instead and add a trash can icon-->
           <b-icon-person-x-fill /> Delete
         </template>
+
         Are you sure you want to delete {{ selCharacter.name }}?
       </b-modal>
 
@@ -121,12 +124,13 @@ export default class CharacterView extends Mixins(GlobalMixin) {
 
   violation = new ViolationCharacter();
 
-  async validateCharacter(): Promise<boolean> {
+  // took validateCharacter to the characterForm
+  async validateCharacter(char : Character): Promise<boolean> {
     // Reset violation to get rid of displayed errors for now
     this.violation = new ViolationCharacter();
 
     // validate data before sending fetch request
-    const errors = await validate(this.selCharacter);
+    const errors = await validate(char);
     console.log('This is from the validate method:');
     console.log(errors);
     if (errors.length > 0) {
@@ -144,13 +148,42 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     return true;
   }
 
+  // this utilizes form buttons instead of modal buttons
+  async saveCharacterFromChild($event: any) {
+    console.log('This is the event');
+    console.log($event);
+    // need to do validation
+    if (!await this.validateCharacter($event)) {
+      console.log('validation failed');
+      return;
+    }
+    this.setBusy(true);
+    // then just send it to the backend db
+
+    this.callAPI(this.CHARACTER_API, 'POST', this.selCharacter) // returns a promise object
+      .then((data) => {
+        // determine if the class was added or updated
+        this.$emit(this.selCharacter.id === data.id ? 'updated' : 'added', data);
+        this.refreshCards();
+      })
+      .catch((error) => {
+        this.violation = error.data || {};
+        console.error(error.data[0]);
+      })
+      .finally(() => {
+        this.setBusy(false);
+        this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
+      });
+  }
+
+  // this method is utilized by the modal buttons are currently in use
   async createCharacter(event : BvModalEvent) {
-    event.preventDefault();// want to kep the modal up, didn't work when called inside the if
+    event.preventDefault();// want to keep the modal up, didn't work when called inside the if
 
     console.log(this.selCharacter);
 
     // need to do validation
-    if (!await this.validateCharacter()) {
+    if (!await this.validateCharacter(this.selCharacter)) {
       console.log('validation failed');
       return;
     }
