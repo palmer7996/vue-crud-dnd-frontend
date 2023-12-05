@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1>Classes</h1>
+    <h1>Characters </h1>
+    <h2>Total: {{count}}</h2>
     <div v-if="isBusy">Loading...</div>
     <div v-else>
       <b-row>
@@ -48,9 +49,9 @@
       </b-row>
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
-          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal">
+          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
-          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal">
+          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
 
@@ -60,7 +61,7 @@
       <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
                @ok="createCharacter" v-model="boolCreateFormModal">
         <CharacterForm debug
-                       :character="selCharacter" :disabled="isDisabled" @busy="setBusy"
+                       :character="selCharacter" :disabled="isDisabled" @busy="setBusy" :violation="violation"
         />
         <!--        shouldn't need to pass any of these because the add, and delete are handled in the view-->
         <!--        class="col-md- col-lg-4 order-md-1 pl-lg-0 "-->
@@ -77,7 +78,7 @@
       </b-modal>
 
       <b-modal title="Delete Character" ok-variant="danger" cancel-variant="primary"
-               @ok="deleteCharacter" v-model="boolDeleteConfirmModal">
+               @ok="deleteCharacter" v-model="boolDeleteConfirmModal" :character="selCharacter" >
         <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
                   slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
                   modify the buttons that appear in the footer of the modal using pre-defined slots-->
@@ -103,14 +104,104 @@ import { Component, Mixins } from 'vue-property-decorator';
 import GlobalMixin from '@/mixins/global-mixin';
 import Character from '@/models/Character';
 import CharacterForm from '@/components/CharacterForm.vue';
+import { BvModalEvent } from 'bootstrap-vue';
+import ViolationDndClass from '@/models/ViolationDndClass';
+import { validate, ValidationError } from 'class-validator';
+import ViolationCharacter from '@/models/ViolationCharacter';
 
 @Component({
   components: { CharacterForm },
 })
-export default class Product extends Mixins(GlobalMixin) {
+export default class CharacterView extends Mixins(GlobalMixin) {
+  count = 0;
+
   dndCharacters: Character[] = [];
 
   selCharacter: Character = new Character();
+
+  violation = new ViolationCharacter();
+
+  async validateCharacter(): Promise<boolean> {
+    // Reset violation to get rid of displayed errors for now
+    this.violation = new ViolationCharacter();
+
+    // validate data before sending fetch request
+    const errors = await validate(this.selCharacter);
+    console.log('This is from the validate method:');
+    console.log(errors);
+    if (errors.length > 0) {
+      const temp = new ViolationCharacter();
+      errors.forEach((vio: ValidationError) => {
+        Object.assign(temp, {
+          [vio.property]: vio.constraints![Object.keys(vio.constraints!)[0]],
+        });
+      });
+
+      console.log(temp);
+      this.violation = temp;
+      return false;
+    }
+    return true;
+  }
+
+  async createCharacter(event : BvModalEvent) {
+    event.preventDefault();// want to kep the modal up, didn't work when called inside the if
+
+    console.log(this.selCharacter);
+
+    // need to do validation
+    if (!await this.validateCharacter()) {
+      console.log('validation failed');
+      return;
+    }
+    this.setBusy(true);
+    // then just send it to the backend db
+
+    this.callAPI(this.CHARACTER_API, 'POST', this.selCharacter) // returns a promise object
+      .then((data) => {
+        // determine if the class was added or updated
+        this.$emit(this.selCharacter.id === data.id ? 'updated' : 'added', data);
+        this.refreshCards();
+      })
+      .catch((error) => {
+        this.violation = error.data || {};
+        console.error(error.data[0]);
+      })
+      .finally(() => {
+        this.setBusy(false);
+        this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
+      });
+  }
+
+  deleteCharacter() {
+    this.setBusy(true);
+    console.log(this.selCharacter);
+    this.violation = new ViolationCharacter();// empty out violation messages
+
+    this.callAPI(`${this.CHARACTER_API}/${this.selCharacter.id}`, 'delete')
+      .then((res) => {
+        this.selCharacter = new Character();
+        // shouldn't need this in this case because the form isn't a child component
+        // this.$emit('deleted', this.tempCharacter);
+        this.refreshCards();
+      })
+      .catch((error) => {
+        this.violation = error.data || {};
+        console.error(error.data[0]);
+      })
+      .finally(() => {
+        this.setBusy(false);
+      });
+  }
+
+  selectCard(item : Character) {
+    if (this.selCharacter.id === item.id) {
+      this.selCharacter = new Character();
+    } else {
+      this.selCharacter = Object.assign(new Character(), item);
+    }
+    console.log(this.selCharacter);
+  }
 
   formatDate(dateString: Date) {
     const options: Intl.DateTimeFormatOptions = {
@@ -124,28 +215,11 @@ export default class Product extends Mixins(GlobalMixin) {
     return new Date(dateString).toLocaleDateString('en-US', options);
   }
 
-  createCharacter() {
-    console.log('create');
-  }
-
-  deleteCharacter() {
-    console.log('delete');
-  }
-
-  selectCard(item : Character) {
-    if (this.selCharacter.id === item.id) {
-      this.selCharacter = new Character();
-    } else {
-      this.selCharacter = Object.assign(new Character(), item);
-    }
-    console.log(this.selCharacter);
-  }
-
+  // getting the data from the backend database
   async refreshCards() {
     await this.fetchFromBackend();
   }
 
-  // getting the data from the backend database
   mounted() {
     this.fetchFromBackend();
   }
@@ -153,10 +227,11 @@ export default class Product extends Mixins(GlobalMixin) {
   async fetchFromBackend() {
     try {
       const data = await this.provider(this.CHARACTER_API);
-      this.dndCharacters = data.characters;
-      console.log(this.dndCharacters);
+      this.dndCharacters = data.characters; // because api call returns count as well
+      this.count = data.count;
+      console.log(data);
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      console.error('Error fetching characters:', error);
     }
   }
 }

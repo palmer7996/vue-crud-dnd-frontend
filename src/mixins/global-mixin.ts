@@ -79,18 +79,17 @@ export default class GlobalMixin extends Vue {
 
   //-------------------------------------------------------
   // variables used by the views for creating and deleting elements
-  violation: any = {}
 
   boolCreateFormModal = false
 
   boolDeleteConfirmModal = false;
 
-  showCreateFormModal() {
-    this.boolCreateFormModal = true;
+  showCreateFormModal(bVal: boolean) {
+    this.boolCreateFormModal = bVal;
   }
 
-  showDeleteConfirmModal() {
-    this.boolDeleteConfirmModal = true;
+  showDeleteConfirmModal(bVal : boolean) {
+    this.boolDeleteConfirmModal = bVal;
   }
 
   async provider(apiLink:string): Promise<any> {

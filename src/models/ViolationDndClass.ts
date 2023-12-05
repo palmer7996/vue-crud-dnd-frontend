@@ -1,4 +1,4 @@
-export default class ViolationClass {
+export default class ViolationDndClass {
   name!: string;
 
   hitDie!: string; // should this be a string?

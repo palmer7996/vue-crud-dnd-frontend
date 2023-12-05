@@ -19,44 +19,45 @@ or use components for them to reuse-->
       </b-row>
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
-          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal">
+          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
-          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal">
+          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
       </div>
 
       <!--      MODAL FORM-->
       <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
-               @ok="createClass" v-model="boolCreateFormModal">
+               @ok="createClass" v-model="boolCreateFormModal" ref="createModal" >
 
-        <b-form-group class="mb-1" :invalid-feedback="violation.name" :has-err="hasErr.cN">
+        <b-form-group class="mb-1" :invalid-feedback="violation.name" :state="hasErr.cN" >
+          <!--        :state="violation.name ? false : null"-->
           <b-input-group>
             <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.cN">
               <b-icon-people :title="dt.cN" />
             </b-input-group-prepend>
 
-            <b-form-input :has-err="hasErr.cN" :placeholder="dt.cN" v-model="selDndClass.name" trim @keydown="violation.name=null"/>
+            <b-form-input :state="hasErr.cN" :placeholder="dt.cN" v-model="selDndClass.name" trim @keydown="violation.name=null"/>
           </b-input-group>
         </b-form-group>
 
-        <b-form-group class="mb-1" :invalid-feedback="violation.hitDie" :has-err="hasErr.hD" >
+        <b-form-group class="mb-1" :invalid-feedback="violation.hitDie" :state="hasErr.hD" >
           <b-input-group>
             <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.hD">
               <b-icon-dice2 :title="dt.hD" />
             </b-input-group-prepend>
             <!--            implementing max and mins for hitdie-->
-            <b-form-input type="number" :min="cons.hitDieMin" :max="cons.hitDieMax" :placeholder="dt.hD" v-model.number="selDndClass.hitDie" :has-err="hasErr.hD" trim @keydown="violation.hitDie=null" />
+            <b-form-input type="number" :placeholder="dt.hD" v-model.number="selDndClass.hitDie" :state="hasErr.hD" trim @keydown="violation.hitDie=null"/>
           </b-input-group>
         </b-form-group>
 
-        <b-form-group class="mb-1" :invalid-feedback="violation.profChoices" :has-err="hasErr.pC">
+        <b-form-group class="mb-1" :invalid-feedback="violation.profChoices" :state="hasErr.pC">
           <b-input-group>
-            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.pC" :has-err="hasErr.pC" trim @keydown="violation.profChoices=null">
+            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.pC" trim @keydown="violation.profChoices=null">
               <b-icon-hammer :title="dt.pC" />
             </b-input-group-prepend>
 
-            <b-form-input :placeholder="dt.pC" v-model="selDndClass.profChoices"/>
+            <b-form-input :placeholder="dt.pC" v-model="selDndClass.profChoices" :state="hasErr.pC" />
 
           </b-input-group>
         </b-form-group>
@@ -99,16 +100,16 @@ import {
 import GlobalMixin from '@/mixins/global-mixin';
 import DndClass from '@/models/DndClass';
 import { validate, ValidationError } from 'class-validator';
-import ViolationClass from '@/models/ViolationClass';
+import ViolationDndClass from '@/models/ViolationDndClass';
+import { BvModalEvent } from 'bootstrap-vue';
 
 @Component
 export default class ClassView extends Mixins(GlobalMixin) {
-  // need to set up validation on the selDndClass
+  // @Prop({ type: DndClass, validator: (s) => s instanceof DndClass }) selDndClass!: DndClass
 
-  cons ={
-    hitDieMin: 4,
-    hitDieMax: 14,
-  }
+  // need to set up validation on the selDndClass
+  violation = new ViolationDndClass();
+  // violation : any = {};
 
   dt = {
     // Display Text - object that stores text to display to the user instead of the attribute names
@@ -125,10 +126,11 @@ export default class ClassView extends Mixins(GlobalMixin) {
       pC: this.violation.profChoices ? false : null,
     };
   }
+  // replaced all has-err with :state="hasErr.hD"
+  // could also work as the below
+  // :state="violation.name ? false : null"
 
   dndClasses: DndClass[] = [];
-
-  // @Prop({ type: Object, validator: (s) => s instanceof Object }) readonly dndClass: any
 
   selDndClass: DndClass = new DndClass();
 
@@ -144,16 +146,16 @@ export default class ClassView extends Mixins(GlobalMixin) {
     console.log(this.selDndClass);
   }
 
-  async characterValidate(): Promise<boolean> {
+  async validateClass(): Promise<boolean> {
     // Reset violation to get rid of displayed errors for now
-    this.violation = new ViolationClass();
+    this.violation = new ViolationDndClass();
 
-    // DONE validate tempStudent data before sending fetch request
+    // validate data before sending fetch request
     const errors = await validate(this.selDndClass);
     console.log('This is from the validate method:');
     console.log(errors);
     if (errors.length > 0) {
-      const temp = new ViolationClass();
+      const temp = new ViolationDndClass();
       errors.forEach((vio: ValidationError) => {
         Object.assign(temp, {
           [vio.property]: vio.constraints![Object.keys(vio.constraints!)[0]],
@@ -164,18 +166,19 @@ export default class ClassView extends Mixins(GlobalMixin) {
       this.violation = temp;
       return false;
     }
-    return true; // this is returning true right now?
+    return true;
   }
 
-  async createClass() {
+  async createClass(event : BvModalEvent) {
+    event.preventDefault();// want to kep the modal up, didn't work when called inside the if
+
     console.log(this.selDndClass);
 
     // need to do validation
-    if (!await this.characterValidate()) {
-      console.log('early return');
+    if (!await this.validateClass()) {
+      console.log('validation failed');
       return;
     }
-
     this.setBusy(true);
     // then just send it to the backend db
 
@@ -186,18 +189,19 @@ export default class ClassView extends Mixins(GlobalMixin) {
         this.refreshCards();
       })
       .catch((error) => {
-        this.violation = error.data || {};
+        this.violation = error.data || new ViolationDndClass();
         console.error(error.data[0]);
       })
       .finally(() => {
         this.setBusy(false);
+        this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
   }
 
   deleteClass() {
     this.setBusy(true);
     console.log(this.selDndClass);
-    this.violation = {};// empty out violation messages
+    this.violation = new ViolationDndClass();// empty out violation messages
 
     this.callAPI(`${this.CLASS_API}/${this.selDndClass.id}`, 'delete')
       .then((res) => {
@@ -207,7 +211,7 @@ export default class ClassView extends Mixins(GlobalMixin) {
         this.refreshCards();
       })
       .catch((error) => {
-        this.violation = error.data || {};
+        this.violation = error.data || ViolationDndClass;
         console.error(error.data[0]);
       })
       .finally(() => {
@@ -215,11 +219,11 @@ export default class ClassView extends Mixins(GlobalMixin) {
       });
   }
 
+  // getting the data from the backend database
   async refreshCards() {
     await this.fetchFromBackend();
   }
 
-  // getting the data from the backend database
   mounted() {
     this.fetchFromBackend();
   }

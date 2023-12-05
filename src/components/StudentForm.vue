@@ -151,10 +151,11 @@ import {
 import Student from '@/models/Student';
 import { BIcon } from 'bootstrap-vue';
 import GlobalMixin from '@/mixins/global-mixin';
+import Character from '@/models/Character';
 
 @Component
 export default class StudentForm extends Mixins(GlobalMixin) {
-  @Prop({ type: Object, validator: (s) => s instanceof Object }) readonly student: any
+  @Prop({ type: Student, validator: (s) => s instanceof Student }) readonly student: any
 
   $refs!: {
     iconDelete: BIcon
