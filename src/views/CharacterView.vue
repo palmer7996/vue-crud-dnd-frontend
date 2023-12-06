@@ -48,12 +48,15 @@
       </b-row>
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
+          <!--          the view your characters will do the inverse if pressed again and show all characters-->
+          <b-button v-b-toggle.sidebar-right variant="info" @click="refreshCards(!boolDisplayUsersCharacter)">
+            View Your Characters</b-button>
           <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
           <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
-        </b-button-group>
 
+        </b-button-group>
       </div>
 
       <!--      MODAL FORM using hide footer to hide the ok and cancel from the modal, instead using the buttons in the child characterForm to allow for easy emitting-->
@@ -102,6 +105,8 @@ import ViolationCharacter from '@/models/ViolationCharacter';
   components: { CharacterForm },
 })
 export default class CharacterView extends Mixins(GlobalMixin) {
+  boolDisplayUsersCharacter = false;
+
   count = 0;
 
   dndCharacters: Character[] = [];
@@ -155,11 +160,12 @@ export default class CharacterView extends Mixins(GlobalMixin) {
 
         // determine if the class was added or updated
         this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
-        this.refreshCards();
+        this.refreshCards(this.boolDisplayUsersCharacter);
       })
       .catch((error) => {
         this.violation = error.data || {};
-        // console.error(error.data[0]);
+        console.error(error.data);
+        this.displayErrorMsg(error);
       })
       .finally(() => {
         this.setBusy(false);
@@ -168,22 +174,29 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   }
 
   deleteCharacter() {
-    this.setBusy(true);
     console.log(this.selCharacter);
-
+    // commented out because it would show loading during the displayErrorMsg function
+    // this.setBusy(true);
     this.callAPI(`${this.CHARACTER_API}/${this.selCharacter.id}`, 'delete')
       .then((res) => {
         this.selCharacter = new Character();
         // shouldn't need this in this case because the form isn't a child component
         // this.$emit('deleted', this.tempCharacter);
-        this.refreshCards();
+        this.refreshCards(this.boolDisplayUsersCharacter);
       })
       .catch((error) => {
         this.violation = error.data || {};
+        console.error(error.data);
+        this.displayErrorMsg(error);
       })
       .finally(() => {
-        this.setBusy(false);
+        // this.setBusy(false);
       });
+  }
+
+  displayErrorMsg(error:any) {
+    console.log(error);
+    alert(error.data.error);
   }
 
   selectCard(item : Character) {
@@ -211,17 +224,22 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   }
 
   // getting the data from the backend database
-  async refreshCards() {
-    await this.fetchFromBackend();
+  async refreshCards(userSpecific:boolean) {
+    this.boolDisplayUsersCharacter = userSpecific;
+    if (userSpecific) {
+      await this.fetchFromBackend(`${this.CHARACTER_USER_API}/${this.userData.id}`);
+    } else {
+      await this.fetchFromBackend(this.CHARACTER_API);
+    }
   }
 
   mounted() {
-    this.fetchFromBackend();
+    this.fetchFromBackend(this.CHARACTER_API);
   }
 
-  async fetchFromBackend() {
+  async fetchFromBackend(characterApi:string) {
     try {
-      const data = await this.provider(this.CHARACTER_API);
+      const data = await this.provider(characterApi);
       this.dndCharacters = data.characters; // because api call returns count as well
       this.count = data.count;
       console.log(data);

@@ -46,13 +46,11 @@ router.beforeEach((to, from, next) => {
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
   // Check if the route requires authentication
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (to.meta.requiresAdminAccessLevel) {
+  if (to.meta?.requiresAdminAccessLevel) {
     // Check if the user is not authenticated or does not have admin access level
     if (!userData || userData.accessLevel !== 'admin') {
       // Redirect to login
-      next({ name: 'login' }); // Assuming your login route is named 'login'
+      next({ name: 'login' });
       console.log(userData);
       alert('You cannot access classes or races if you are not an admin, please login if you are an admin');
       return; // Add return to exit the guard function

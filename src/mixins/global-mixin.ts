@@ -16,9 +16,10 @@ const STUDENT_API = `${BASE_API}/students`;
 
 const BACKEND_BASE_API = 'http://localhost:3004';
 const CHARACTER_API = `${BACKEND_BASE_API}/characters`;
+const CHARACTER_USER_API = `${BACKEND_BASE_API}/characters/users`;
 const RACE_API = `${BACKEND_BASE_API}/info/races`;
 const CLASS_API = `${BACKEND_BASE_API}/info/classes`;
-const USER_API = `${BACKEND_BASE_API}/users`;
+const USER_API = `${BACKEND_BASE_API}/users`; // used for login
 
 const FETCH_HEADERS:any = {
   'X-Requested-With': 'XmlHttpRequest',
@@ -39,6 +40,8 @@ export default class GlobalMixin extends Vue {
   BACKEND_BASE_API = BACKEND_BASE_API
 
   CHARACTER_API = CHARACTER_API
+
+  CHARACTER_USER_API = CHARACTER_USER_API;
 
   RACE_API = RACE_API
 
