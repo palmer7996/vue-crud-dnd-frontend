@@ -18,19 +18,6 @@ const routes: Array<RouteConfig> = [
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/LoginView.vue'),
   },
-  /** *******   Add route item for Student View  ********* */
-  {
-    path: '/student',
-    name: 'Student',
-    component: () => import('../views/StudentView.vue'),
-  },
-  /** *******   Add route item for Product View  ********* */
-  {
-    path: '/product',
-    name: 'Product',
-    component: () => import('../views/ProductView.vue'),
-  },
-
   {
     path: '/character',
     name: 'Character',
@@ -46,6 +33,7 @@ const routes: Array<RouteConfig> = [
     path: '/race',
     name: 'Race',
     component: () => import('../views/RaceView.vue'),
+    meta: { requiresAdminAccessLevel: true }, // require authentication to access the class or race routes
   },
 
 ];
@@ -66,6 +54,7 @@ router.beforeEach((to, from, next) => {
       // Redirect to login
       next({ name: 'login' }); // Assuming your login route is named 'login'
       console.log(userData);
+      alert('You cannot access classes or races if you are not an admin, please login if you are an admin');
       return; // Add return to exit the guard function
     }
   }

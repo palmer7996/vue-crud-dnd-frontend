@@ -53,11 +53,11 @@ or use components for them to reuse-->
 
         <b-form-group class="mb-1" :invalid-feedback="violation.profChoices" :state="hasErr.pC">
           <b-input-group>
-            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.pC" trim @keydown="violation.profChoices=null">
+            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.pC" >
               <b-icon-hammer :title="dt.pC" />
             </b-input-group-prepend>
 
-            <b-form-input :placeholder="dt.pC" v-model="selDndClass.profChoices" :state="hasErr.pC" />
+            <b-form-input :placeholder="dt.pC" v-model="selDndClass.profChoices" :state="hasErr.pC" trim @keydown="violation.profChoices=null"/>
 
           </b-input-group>
         </b-form-group>

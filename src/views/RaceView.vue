@@ -53,11 +53,11 @@
 
         <b-form-group class="mb-1" :invalid-feedback="violation.abilityScoreType" :state="hasErr.sT">
           <b-input-group>
-            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.sT" trim @keydown="violation.abilityScoreType=null">
+            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.sT" >
               <b-icon-hammer :title="dt.sT" />
             </b-input-group-prepend>
-
-            <b-form-input :placeholder="dt.sT" v-model="selDndRace.abilityScoreType" :state="hasErr.sT" />
+            <!--            no keydown = null just so user can see the options-->
+            <b-form-input :placeholder="dt.sT" v-model="selDndRace.abilityScoreType" :state="hasErr.sT" trim/>
 
           </b-input-group>
         </b-form-group>
@@ -65,31 +65,30 @@
         <b-form-group class="mb-1" :invalid-feedback="violation.abilityScoreBonus" :state="hasErr.sB" >
           <b-input-group>
             <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.sB">
-              <b-icon-dice2 :title="dt.sB" />
+              <b-icon-dice3 :title="dt.sB" />
             </b-input-group-prepend>
-            <!--            implementing max and mins for hitdie-->
             <b-form-input type="number" :placeholder="dt.sB" v-model.number="selDndRace.abilityScoreBonus" :state="hasErr.sB" trim @keydown="violation.abilityScoreBonus=null"/>
           </b-input-group>
         </b-form-group>
 
         <b-form-group class="mb-1" :invalid-feedback="violation.ageDesc" :state="hasErr.aG">
           <b-input-group>
-            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.aG" trim @keydown="violation.ageDesc=null">
-              <b-icon-hammer :title="dt.aG" />
+            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.aG" >
+              <b-icon-person-lines-fill :title="dt.aG" />
             </b-input-group-prepend>
 
-            <b-form-input :placeholder="dt.aG" v-model="selDndRace.ageDesc" :state="hasErr.aG" />
+            <b-form-input :placeholder="dt.aG" v-model="selDndRace.ageDesc" :state="hasErr.aG" trim @keydown="violation.ageDesc=null" />
 
           </b-input-group>
         </b-form-group>
 
         <b-form-group class="mb-1" :invalid-feedback="violation.alignmentDesc" :state="hasErr.aL">
           <b-input-group>
-            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.aL" trim @keydown="violation.alignmentDesc=null">
-              <b-icon-hammer :title="dt.aL" />
+            <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.aL" >
+              <b-icon-person-lines-fill :title="dt.aL" />
             </b-input-group-prepend>
 
-            <b-form-input :placeholder="dt.aL" v-model="selDndRace.alignmentDesc" :state="hasErr.aL" />
+            <b-form-input :placeholder="dt.aL" v-model="selDndRace.alignmentDesc" :state="hasErr.aL" trim @keydown="violation.alignmentDesc=null"/>
 
           </b-input-group>
         </b-form-group>
