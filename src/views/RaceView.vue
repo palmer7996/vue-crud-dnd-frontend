@@ -172,6 +172,8 @@ export default class RaceView extends Mixins(GlobalMixin) {
   selDndRace: DndRace = new DndRace();
 
   selectCard(item : DndRace) {
+    // clear violations
+    this.violation = new ViolationDndRace();
     if (this.selDndRace.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndRace = new DndRace();

@@ -47,12 +47,14 @@ export default class LoginView extends Mixins(GlobalMixin) {
   }
 
   checkAccount() {
-    alert(`Your access level is: ${this.userData.accessLevel}`);
+    alert(`Your username is: ${this.userData.username}
+    \nYour access level is: ${this.userData.accessLevel}
+    \nYour user id is: ${this.userData.id}`);
   }
 
   // reset the userData to the default
   logout() {
-    this.saveUserData('read', '');
+    this.saveUserData('read', '', 0, '');
   }
 
   login() {
@@ -61,8 +63,8 @@ export default class LoginView extends Mixins(GlobalMixin) {
     this.callAPI(this.USER_API, 'POST', this.userLogin) // returns a promise object
       .then((data) => {
         // assign to the userData global object
-        this.saveUserData(data.accessLevel, data.token);
-        alert('Login successful!');
+        this.saveUserData(data.accessLevel, data.token, data.id, data.username);
+        alert(`Login successful!\nYour access level is: ${data.accessLevel}`);
       })
       .catch((error) => {
         alert(`${error.data.message}`);

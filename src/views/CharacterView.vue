@@ -148,16 +148,18 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     }
     this.setBusy(true);
     // then just send it to the backend db
-
+    console.log(this.CHARACTER_API);
     this.callAPI(this.CHARACTER_API, 'POST', tempCharacter) // returns a promise object
       .then((data) => {
+        console.log(data);
+
         // determine if the class was added or updated
         this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
         this.refreshCards();
       })
       .catch((error) => {
         this.violation = error.data || {};
-        console.error(error.data[0]);
+        // console.error(error.data[0]);
       })
       .finally(() => {
         this.setBusy(false);
@@ -168,7 +170,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   deleteCharacter() {
     this.setBusy(true);
     console.log(this.selCharacter);
-    this.violation = new ViolationCharacter();// empty out violation messages
 
     this.callAPI(`${this.CHARACTER_API}/${this.selCharacter.id}`, 'delete')
       .then((res) => {
@@ -179,7 +180,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
       })
       .catch((error) => {
         this.violation = error.data || {};
-        console.error(error.data[0]);
       })
       .finally(() => {
         this.setBusy(false);
@@ -187,6 +187,9 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   }
 
   selectCard(item : Character) {
+    // clear violations
+    this.violation = new ViolationCharacter();
+    // Reset violation to get rid of displayed errors for now
     if (this.selCharacter.id === item.id) {
       this.selCharacter = new Character();
     } else {

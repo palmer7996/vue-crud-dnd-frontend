@@ -135,6 +135,8 @@ export default class ClassView extends Mixins(GlobalMixin) {
   selDndClass: DndClass = new DndClass();
 
   selectCard(item : DndClass) {
+    // clear violations
+    this.violation = new ViolationDndClass();
     if (this.selDndClass.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndClass = new DndClass();

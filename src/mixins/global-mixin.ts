@@ -13,7 +13,6 @@ import User from '@/models/User';
 // for the json db
 const BASE_API = 'http://localhost:3006';
 const STUDENT_API = `${BASE_API}/students`;
-const PRODUCT_API = `${BASE_API}/products`;
 
 const BACKEND_BASE_API = 'http://localhost:3004';
 const CHARACTER_API = `${BACKEND_BASE_API}/characters`;
@@ -37,8 +36,6 @@ export default class GlobalMixin extends Vue {
 
   STUDENT_API = STUDENT_API
 
-  PRODUCT_API = PRODUCT_API
-
   BACKEND_BASE_API = BACKEND_BASE_API
 
   CHARACTER_API = CHARACTER_API
@@ -56,12 +53,16 @@ export default class GlobalMixin extends Vue {
   userData = {
     accessLevel: 'read',
     token: '',
+    id: 0,
+    username: '',
   }; // utilizing the token in the callAPI method
 
   // currently storing userData inside localStorage, could modify to use vuex or some other implementation
-  saveUserData(accessLevel:string, token:string) {
+  saveUserData(accessLevel:string, token:string, id:number, username:string) {
     this.userData.accessLevel = accessLevel;
     this.userData.token = token;
+    this.userData.id = id;
+    this.userData.username = username;
     localStorage.setItem('userData', JSON.stringify(this.userData));
   }
 

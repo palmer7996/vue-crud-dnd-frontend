@@ -120,7 +120,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.sT">
           <b-icon-dice1 :title="dt.sT" />
-          <span class="ml-2">{{dt.sT}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" :placeholder="dt.sT" :state="hasErr.sT" :disabled="isDisabled"
                       v-model.number="tempCharacter.strength" trim @keydown="violation.strength=null" />
@@ -132,7 +131,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.dX">
           <b-icon-dice2 :title="dt.dX" />
-          <span class="ml-2">{{dt.dX}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" :placeholder="dt.dX" :state="hasErr.dX" :disabled="isDisabled"
                       v-model.number="tempCharacter.dexterity" trim @keydown="violation.dexterity=null" />
@@ -144,7 +142,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.cT">
           <b-icon-dice3 :title="dt.cT" />
-          <span class="ml-2">{{dt.cT}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" :placeholder="dt.cT" :state="hasErr.cT" :disabled="isDisabled"
                       v-model.number="tempCharacter.constitution" trim @keydown="violation.constitution=null" />
@@ -156,7 +153,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.iT">
           <b-icon-dice4 :title="dt.iT" />
-          <span class="ml-2">{{dt.iT}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" :placeholder="dt.iT" :state="hasErr.iT" :disabled="isDisabled"
                       v-model.number="tempCharacter.intelligence" trim @keydown="violation.intelligence=null" />
@@ -168,7 +164,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.wS">
           <b-icon-dice5 :title="dt.wS" />
-          <span class="ml-2">{{dt.wS}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" :placeholder="dt.wS" :state="hasErr.wS" :disabled="isDisabled"
                       v-model.number="tempCharacter.wisdom" trim @keydown="violation.wisdom=null" />
@@ -180,7 +175,6 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       <b-input-group>
         <b-input-group-prepend is-text v-b-tooltip.hover.right="dt.cA">
           <b-icon-dice6 :title="dt.cA" />
-          <span class="ml-2">{{dt.cA}}:</span>
         </b-input-group-prepend>
         <b-form-input type="number" id="chaInput" :placeholder="dt.cA" :state="hasErr.cA" :disabled="isDisabled"
                       v-model.number="tempCharacter.charisma" trim @keydown="violation.charisma=null" />

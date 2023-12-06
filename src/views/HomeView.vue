@@ -12,14 +12,12 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue';
 import IconButton from '@/components/IconButton.vue';
 import GlobalMixin from '@/mixins/global-mixin'; // @ is an alias to /src
 
 @Component({
   components: {
     IconButton,
-    HelloWorld,
   },
 })
 export default class HomeView extends Mixins(GlobalMixin) {
