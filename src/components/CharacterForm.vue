@@ -59,6 +59,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
       </b-input-group>
     </b-form-group>
 
+    <!-- dont have @keydown dissapear violation for gender, class race and alignment to allow user to easily copy one of the valid values in the error statement-->
     <!-- GENDER -->
     <b-form-group :invalid-feedback="violation.gender" :state="hasErr.gN" class="mb-1">
       <b-input-group>
@@ -66,7 +67,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-gender-ambiguous :title="dt.gN" />
         </b-input-group-prepend>
         <b-form-input :placeholder="dt.gN" :state="hasErr.gN" :disabled="isDisabled"
-                      v-model="tempCharacter.gender" trim @keydown="violation.gender=null" />
+                      v-model="tempCharacter.gender" trim />
       </b-input-group>
     </b-form-group>
 
@@ -77,7 +78,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-people :title="dt.cL" />
         </b-input-group-prepend>
         <b-form-input :placeholder="dt.cL" :state="hasErr.cL" :disabled="isDisabled"
-                      v-model="tempCharacter.class" trim @keydown="violation.class=null" />
+                      v-model="tempCharacter.class" trim />
       </b-input-group>
     </b-form-group>
 
@@ -88,7 +89,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-people :title="dt.rC" />
         </b-input-group-prepend>
         <b-form-input :placeholder="dt.rC" :state="hasErr.rC" :disabled="isDisabled"
-                      v-model="tempCharacter.race" trim @keydown="violation.race=null" />
+                      v-model="tempCharacter.race" trim />
       </b-input-group>
     </b-form-group>
 
@@ -99,7 +100,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
           <b-icon-circle-half :title="dt.aL" />
         </b-input-group-prepend>
         <b-form-input :placeholder="dt.aL" :state="hasErr.aL" :disabled="isDisabled"
-                      v-model="tempCharacter.alignment" trim @keydown="violation.alignment=null" />
+                      v-model="tempCharacter.alignment" trim />
       </b-input-group>
     </b-form-group>
 
@@ -190,13 +191,13 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
     <!-- BUTTONS -->
     <b-button-group class="w-100 mb-3">
       <b-button variant="danger" :disabled="isDisabled" @click="cancel">
-        <b-icon-x-square-fill /> Cancel</b-button>
+        <b-icon-x-octagon-fill /> Cancel</b-button>
       <!--    save button,  onclick call the saveStudent function
         disabled prop is bound to the computed property 'isDisabled' -->
       <b-button variant="primary" :disabled="isDisabled" @click="saveCharacter">
         <!--    use a cloud icon, add a ref (reference) to this icon as 'iconSave' so we can animate it when saveStudent is called
             https://vuejs.org/v2/api/#ref -->
-        <b-icon-cloud-arrow-up-fill ref="iconSave" /> Save</b-button>
+        <b-icon-person-plus-fill ref="iconSave" /> Save</b-button>
     </b-button-group>
 
     <!--    currently replaced all the  @keydown="violation.intelligence=null" with =undefined and changed attributes in ViolationCharacter to ?-->

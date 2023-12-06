@@ -63,7 +63,7 @@ or use components for them to reuse-->
         </b-form-group>
 
         <template #modal-cancel>
-          <b-icon-stop /> Cancel
+          <b-icon-x-octagon-fill /> Cancel
         </template>
         <template #modal-ok>
           <b-icon-person-plus-fill />
@@ -78,12 +78,12 @@ or use components for them to reuse-->
           modify the buttons that appear in the footer of the modal using pre-defined slots-->
         <template #modal-cancel>
           <!-- add a X icon to the cancel button-->
-          <b-icon-stop /> Cancel
+          <b-icon-x-octagon-fill /> Cancel
         </template>
 
         <template #modal-ok>
           <!-- change the OK button to say Delete instead and add a trash can icon-->
-          <b-icon-person-x-fill /> Delete
+          <b-icon-exclamation-triangle-fill /> Delete
         </template>
         Are you sure you want to delete {{ selDndClass.name }}?
       </b-modal>

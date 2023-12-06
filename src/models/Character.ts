@@ -7,6 +7,11 @@ import {
   Min,
   ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate, MaxLength,
 } from 'class-validator';
+import DndRace from '@/models/DndRace';
+import DndClass from '@/models/DndClass';
+import GlobalMixin from '@/mixins/global-mixin';
+import { mixins } from 'vue-class-component';
+import { isValidClassValue, isValidRaceValue } from '@/models/CharacterValidationForClassAndRace';
 
 // import { DndRace } from './DndRace'
 // import { DndClass } from './DndClass'
@@ -37,12 +42,12 @@ export default class Character {
 
   @IsNotEmpty({ message: 'Class is Required' })
   // @IsIn(classArray, { message: 'Please choose between the options: ' })
-  // @Validate(isValidClassValue, ['class'])
+  @Validate(isValidClassValue, ['class'])
     class!: string
 
   @IsNotEmpty({ message: 'Race is Required' })
   // @IsIn(raceArray, { message: 'Please choose between the options: ' + raceArray.toString() })
-  // @Validate(isValidRaceValue, ['race'])
+  @Validate(isValidRaceValue, ['race'])
     race!: string
 
   @IsNotEmpty({ message: 'Alignment is Required' })

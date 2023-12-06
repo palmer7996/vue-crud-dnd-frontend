@@ -1,7 +1,7 @@
 export default class ViolationDndClass {
-  name!: string;
+  name!: string | null;
 
-  hitDie!: string; // should this be a string?
+  hitDie!: string | null;
 
-  profChoices!: string;
+  profChoices!: string | null;
 }

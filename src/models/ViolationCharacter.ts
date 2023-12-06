@@ -1,28 +1,28 @@
 export default class ViolationCharacter {
-  name!: string;
+  name!: string | null;
 
-  age!: string;
+  age!: string | null;
 
-  gender!: string;
+  gender!: string | null;
 
-  class!: string;
+  class!: string | null;
 
-  race!: string;
+  race!: string | null;
 
-  alignment!: string;
+  alignment!: string | null;
 
-  description!: string;
+  description!: string | null;
 
-  strength!: string;
+  strength!: string | null;
 
-  dexterity!: string;
+  dexterity!: string | null;
 
-  constitution!: string;
+  constitution!: string | null;
 
-  intelligence!: string;
+  intelligence!: string | null;
 
-  wisdom!: string;
+  wisdom!: string | null;
 
-  charisma!: string;
+  charisma!: string | null;
 }
 // replaced with ! instead of ! for a test

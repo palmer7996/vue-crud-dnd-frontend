@@ -9,11 +9,10 @@
           <b-card @click="selectCard(item)" :class="{'border-primary': selCharacter.id === item.id}">
             <b-card-body >
               <h4 class="mb-4 font-weight-bold">{{ item.name }}</h4>
-
+              <p class="card-text">(Owner by user with the id: {{ item.userId }})</p>
               <!-- Details in columns -->
               <b-row>
                 <b-col md="6">
-                  <!--                  <p class="card-text">Item Info: {{ item }}</p>-->
                   <p class="card-text">Age: {{ item.age }}</p>
                   <p class="card-text">Gender: {{ item.gender }}</p>
                   <p class="card-text">Date Created: {{ formatDate(item.dateCreated) }}</p>
@@ -57,25 +56,12 @@
 
       </div>
 
-      <!--      MODAL FORM-->
-      <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
-               @ok="createCharacter" v-model="boolCreateFormModal">
+      <!--      MODAL FORM using hide footer to hide the ok and cancel from the modal, instead using the buttons in the child characterForm to allow for easy emitting-->
+      <!--      closeModal and childSavesCharacter function as the alternatives for the ok and cancel-->
+      <b-modal title="Create" v-model="boolCreateFormModal" hide-footer>
         <CharacterForm debug
                        :character="selCharacter" :disabled="isDisabled" @busy="setBusy" :violation="violation"
-                       @closeModal="showCreateFormModal(false)" @childSaveCharacter="saveCharacterFromChild($event)"
-        />
-        <!--        shouldn't need to pass any of these because the add, and delete are handled in the view-->
-        <!--        class="col-md- col-lg-4 order-md-1 pl-lg-0 "-->
-        <!--        @added="handleAdd" @updated="handleUpdate" @deleted="handleDelete"-->
-        <!--        @cancelled="handleCancel" @reset="handleReset"-->
-
-        <template #modal-cancel>
-          <b-icon-stop /> Cancel
-        </template>
-        <template #modal-ok>
-          <b-icon-person-plus-fill />
-          {{ selCharacter.id ? 'Edit' : 'Create' }}
-        </template>
+                       @closeModal="showCreateFormModal(false)" @childSaveCharacter="saveCharacterFromChild($event)"/>
       </b-modal>
 
       <b-modal title="Delete Character" ok-variant="danger" cancel-variant="primary"
@@ -86,12 +72,12 @@
 
         <template #modal-cancel>
           <!-- add a X icon to the cancel button-->
-          <b-icon-stop /> Cancel
+          <b-icon-x-octagon-fill /> Cancel
         </template>
 
         <template #modal-ok>
           <!-- change the OK button to say Delete instead and add a trash can icon-->
-          <b-icon-person-x-fill /> Delete
+          <b-icon-exclamation-triangle-fill /> Delete
         </template>
 
         Are you sure you want to delete {{ selCharacter.name }}?
@@ -148,52 +134,25 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     return true;
   }
 
-  // this utilizes form buttons instead of modal buttons
+  // this responds to a form button click instead of modal buttons
   async saveCharacterFromChild($event: any) {
+    // this is the method that the characterForm emits to
+    const tempCharacter:Character = $event;
     console.log('This is the event');
-    console.log($event);
+    console.log(tempCharacter);
+
     // need to do validation
-    if (!await this.validateCharacter($event)) {
+    if (!await this.validateCharacter(tempCharacter)) {
       console.log('validation failed');
       return;
     }
     this.setBusy(true);
     // then just send it to the backend db
 
-    this.callAPI(this.CHARACTER_API, 'POST', this.selCharacter) // returns a promise object
+    this.callAPI(this.CHARACTER_API, 'POST', tempCharacter) // returns a promise object
       .then((data) => {
         // determine if the class was added or updated
-        this.$emit(this.selCharacter.id === data.id ? 'updated' : 'added', data);
-        this.refreshCards();
-      })
-      .catch((error) => {
-        this.violation = error.data || {};
-        console.error(error.data[0]);
-      })
-      .finally(() => {
-        this.setBusy(false);
-        this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
-      });
-  }
-
-  // this method is utilized by the modal buttons are currently in use
-  async createCharacter(event : BvModalEvent) {
-    event.preventDefault();// want to keep the modal up, didn't work when called inside the if
-
-    console.log(this.selCharacter);
-
-    // need to do validation
-    if (!await this.validateCharacter(this.selCharacter)) {
-      console.log('validation failed');
-      return;
-    }
-    this.setBusy(true);
-    // then just send it to the backend db
-
-    this.callAPI(this.CHARACTER_API, 'POST', this.selCharacter) // returns a promise object
-      .then((data) => {
-        // determine if the class was added or updated
-        this.$emit(this.selCharacter.id === data.id ? 'updated' : 'added', data);
+        this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
         this.refreshCards();
       })
       .catch((error) => {

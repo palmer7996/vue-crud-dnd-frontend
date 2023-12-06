@@ -42,11 +42,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/ClassView.vue'),
     meta: { requiresAdminAccessLevel: true }, // require authentication to access the class or race routes
   },
-  /*   {
+  {
     path: '/race',
     name: 'Race',
-    component: () => import('../views/CharacterView.vue'),
-  }, */
+    component: () => import('../views/RaceView.vue'),
+  },
 
 ];
 
