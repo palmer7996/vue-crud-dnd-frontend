@@ -21,7 +21,7 @@ or use components for them to reuse-->
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            Create/Edit</b-button>
+            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
@@ -134,10 +134,12 @@ export default class ClassView extends Mixins(GlobalMixin) {
     if (this.selDndClass.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndClass = new DndClass();
+      this.toggleDisplayCreate(true);
     } else {
       // click on a card not selected
       // this.tempDndClass = item;
       this.selDndClass = Object.assign(new DndClass(), item);
+      this.toggleDisplayCreate(false);
     }
     console.log(this.selDndClass);
   }
@@ -177,6 +179,7 @@ export default class ClassView extends Mixins(GlobalMixin) {
     }
     this.setBusy(true);
     // then just send it to the backend db
+    // after adjusting api can just do a post for edits and creates for ClassView and RaceView
 
     this.callAPI(this.CLASS_API, 'POST', this.selDndClass) // returns a promise object
       .then((data) => {

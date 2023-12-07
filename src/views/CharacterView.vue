@@ -52,7 +52,7 @@
           <b-button v-b-toggle.sidebar-right :variant="btnTypeView" @click="refreshCards(!boolDisplayUsersCharacter)">
             {{ boolDisplayUsersCharacter ? 'View All Characters' : 'View Your Characters' }}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            Create/Edit</b-button>
+            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
 
@@ -89,8 +89,6 @@ import { Component, Mixins } from 'vue-property-decorator';
 import GlobalMixin from '@/mixins/global-mixin';
 import Character from '@/models/Character';
 import CharacterForm from '@/components/CharacterForm.vue';
-import { BvModalEvent } from 'bootstrap-vue';
-import ViolationDndClass from '@/models/ViolationDndClass';
 import { validate, ValidationError } from 'class-validator';
 import ViolationCharacter from '@/models/ViolationCharacter';
 
@@ -148,13 +146,15 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     // this.setBusy(true);
 
     // then just send it to the backend db
-    console.log(this.CHARACTER_API);
-    this.callAPI(this.CHARACTER_API, 'POST', tempCharacter) // returns a promise object
+    // if character id make a put, otherwise make a post
+    const requestType: string = tempCharacter.id ? 'PUT' : 'POST';
+    this.callAPI(this.CHARACTER_API, requestType, tempCharacter) // returns a promise object
       .then((data) => {
+        console.log('data returned from api call');
         console.log(data);
 
-        // determine if the class was added or updated
-        this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
+        // determine if the character was added or updated
+        // this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
         this.refreshCards(this.boolDisplayUsersCharacter);
       })
       .catch((error) => {
@@ -197,13 +197,17 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   }
 
   selectCard(item : Character) {
+    // toggle what displays under the create/edit button
+
     // clear violations
     this.violation = new ViolationCharacter();
     // Reset violation to get rid of displayed errors for now
     if (this.selCharacter.id === item.id) {
       this.selCharacter = new Character();
+      this.toggleDisplayCreate(true);
     } else {
       this.selCharacter = Object.assign(new Character(), item);
+      this.toggleDisplayCreate(false);
     }
     console.log(this.selCharacter);
   }

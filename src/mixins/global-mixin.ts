@@ -93,6 +93,11 @@ export default class GlobalMixin extends Vue {
 
   //-------------------------------------------------------
   // variables used by the views for creating and deleting elements
+  boolToggleDisplayCreate = true;
+
+  toggleDisplayCreate(bCreate:boolean) {
+    this.boolToggleDisplayCreate = bCreate;
+  }
 
   boolCreateFormModal = false
 

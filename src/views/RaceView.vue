@@ -20,7 +20,7 @@
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            Create/Edit</b-button>
+            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
@@ -171,10 +171,12 @@ export default class RaceView extends Mixins(GlobalMixin) {
     if (this.selDndRace.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndRace = new DndRace();
+      this.toggleDisplayCreate(true);
     } else {
       // click on a card not selected
       // this.tempDndRace = item;
       this.selDndRace = Object.assign(new DndRace(), item);
+      this.toggleDisplayCreate(false);
     }
     console.log(this.selDndRace);
   }
