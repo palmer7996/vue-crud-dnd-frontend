@@ -255,7 +255,7 @@ export default class CharacterForm extends Mixins(GlobalMixin) {
     cA: 'Charisma',
   }
 
-  created() { // could also use mounted()
+  created() { // could also use mounted() ?
     this.tempCharacter = Object.assign(new Character(), this.character);
   }
 

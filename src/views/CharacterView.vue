@@ -163,6 +163,8 @@ export default class CharacterView extends Mixins(GlobalMixin) {
         this.displayErrorMsg(error);
       })
       .finally(() => {
+        // assign selCharacter to the modified character without this if they edit then reopen to edit the tempCharacter is given an older version
+        this.selCharacter = tempCharacter;
         // this.setBusy(false);
         this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
