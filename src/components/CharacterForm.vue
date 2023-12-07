@@ -184,11 +184,11 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
 
     <!-- BUTTONS -->
     <b-button-group class="w-100 mb-3">
-      <b-button variant="danger" :disabled="isDisabled" @click="cancel">
+      <b-button :variant="btnTypeCancel" :disabled="isDisabled" @click="cancel">
         <b-icon-x-octagon-fill /> Cancel</b-button>
       <!--    save button,  onclick call the saveStudent function
         disabled prop is bound to the computed property 'isDisabled' -->
-      <b-button variant="primary" :disabled="isDisabled" @click="saveCharacter">
+      <b-button :variant="btnTypeSubmit" :disabled="isDisabled" @click="saveCharacter">
         <!--    use a cloud icon, add a ref (reference) to this icon as 'iconSave' so we can animate it when saveStudent is called
             https://vuejs.org/v2/api/#ref -->
         <b-icon-person-plus-fill ref="iconSave" /> Save</b-button>

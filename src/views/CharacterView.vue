@@ -49,11 +49,11 @@
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
           <!--          the view your characters will do the inverse if pressed again and show all characters-->
-          <b-button v-b-toggle.sidebar-right variant="info" @click="refreshCards(!boolDisplayUsersCharacter)">
-            View Your Characters</b-button>
-          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeView" @click="refreshCards(!boolDisplayUsersCharacter)">
+            {{ boolDisplayUsersCharacter ? 'View All Characters' : 'View Your Characters' }}</b-button>
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
-          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
 
         </b-button-group>
@@ -67,19 +67,12 @@
                        @closeModal="showCreateFormModal(false)" @childSaveCharacter="saveCharacterFromChild($event)"/>
       </b-modal>
 
-      <b-modal title="Delete Character" ok-variant="danger" cancel-variant="primary"
+      <b-modal title="Delete Character" :ok-variant="btnTypeDelete" :cancel-variant="btnTypeCancel"
                @ok="deleteCharacter" v-model="boolDeleteConfirmModal" :character="selCharacter" >
-        <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
-                  slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
-                  modify the buttons that appear in the footer of the modal using pre-defined slots-->
-
         <template #modal-cancel>
-          <!-- add a X icon to the cancel button-->
           <b-icon-x-octagon-fill /> Cancel
         </template>
-
         <template #modal-ok>
-          <!-- change the OK button to say Delete instead and add a trash can icon-->
           <b-icon-exclamation-triangle-fill /> Delete
         </template>
 
@@ -151,7 +144,9 @@ export default class CharacterView extends Mixins(GlobalMixin) {
       console.log('validation failed');
       return;
     }
-    this.setBusy(true);
+    // commented out because it would show loading during the displayErrorMsg function
+    // this.setBusy(true);
+
     // then just send it to the backend db
     console.log(this.CHARACTER_API);
     this.callAPI(this.CHARACTER_API, 'POST', tempCharacter) // returns a promise object
@@ -168,7 +163,7 @@ export default class CharacterView extends Mixins(GlobalMixin) {
         this.displayErrorMsg(error);
       })
       .finally(() => {
-        this.setBusy(false);
+        // this.setBusy(false);
         this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
   }

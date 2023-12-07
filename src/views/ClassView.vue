@@ -10,24 +10,25 @@ or use components for them to reuse-->
         <b-col v-for="item in dndClasses" :key="item.id" lg="4" md="6" sm="12" class="mb-2">
           <b-card @click="selectCard(item)" :class="{'border-primary': selDndClass.id === item.id}">
             <b-card-body >
-              <p class="card-text">Name: {{ item.name }}</p>
-              <p class="card-text">hitDie: {{ item.hitDie }}</p>
-              <p class="card-text">proficiency: {{ item.profChoices }}</p>
+
+              <h4 class="card-text">{{ item.name }}</h4>
+              <p class="card-text">Hit Die: {{ item.hitDie }}</p>
+              <p class="card-text">Proficiency: {{ item.profChoices }}</p>
             </b-card-body>
           </b-card>
         </b-col>
       </b-row>
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
-          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
-          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
       </div>
 
       <!--      MODAL FORM-->
-      <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
+      <b-modal title="Create" :ok-variant="btnTypeSubmit" :cancel-variant="btnTypeCancel"
                @ok="createClass" v-model="boolCreateFormModal" ref="createModal" >
 
         <b-form-group class="mb-1" :invalid-feedback="violation.name" :state="hasErr.cN" >
@@ -71,23 +72,16 @@ or use components for them to reuse-->
         </template>
       </b-modal>
 
-      <b-modal title="Delete Class" ok-variant="danger" cancel-variant="primary"
+      <b-modal title="Delete Class" :ok-variant="btnTypeDelete" :cancel-variant="btnTypeCancel"
                @ok="deleteClass" v-model="boolDeleteConfirmModal">
-        <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
-          slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
-          modify the buttons that appear in the footer of the modal using pre-defined slots-->
         <template #modal-cancel>
-          <!-- add a X icon to the cancel button-->
           <b-icon-x-octagon-fill /> Cancel
         </template>
-
         <template #modal-ok>
-          <!-- change the OK button to say Delete instead and add a trash can icon-->
           <b-icon-exclamation-triangle-fill /> Delete
         </template>
         Are you sure you want to delete {{ selDndClass.name }}?
       </b-modal>
-
     </div>
   </div>
 

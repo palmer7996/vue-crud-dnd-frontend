@@ -7,27 +7,27 @@
         <b-col v-for="item in dndRaces" :key="item.id" lg="4" md="6" sm="12" class="mb-2">
           <b-card @click="selectCard(item)" :class="{'border-primary': selDndRace.id === item.id}">
             <b-card-body >
-              <p class="card-text">Name: {{ item.name }}</p>
+              <h4 class="card-text">{{ item.name }}</h4>
               <p class="card-text">Speed: {{ item.speed }}</p>
-              <p class="card-text">abilityScoreType: {{ item.abilityScoreType }}</p>
-              <p class="card-text">abilityScoreBonus: {{ item.abilityScoreBonus }}</p>
-              <p class="card-text">ageDesc: {{ item.ageDesc }}</p>
-              <p class="card-text">alignmentDesc: {{ item.alignmentDesc }}</p>
+              <p class="card-text">Ability Score Type: {{ item.abilityScoreType }}</p>
+              <p class="card-text">Ability Score Bonus: {{ item.abilityScoreBonus }}</p>
+              <p class="card-text">Age Description: {{ item.ageDesc }}</p>
+              <p class="card-text">Alignment Description: {{ item.alignmentDesc }}</p>
             </b-card-body>
           </b-card>
         </b-col>
       </b-row>
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
-          <b-button v-b-toggle.sidebar-right variant="primary" @click="showCreateFormModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
             Create/Edit</b-button>
-          <b-button v-b-toggle.sidebar-right variant="danger" @click="showDeleteConfirmModal(true)">
+          <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
       </div>
 
       <!--      MODAL FORM-->
-      <b-modal title="Create" ok-variant="ok" cancel-variant="primary"
+      <b-modal title="Create" :ok-variant="btnTypeSubmit" :cancel-variant="btnTypeCancel"
                @ok="createRace" v-model="boolCreateFormModal" ref="createModal" >
 
         <b-form-group class="mb-1" :invalid-feedback="violation.name" :state="hasErr.rN" >
@@ -102,18 +102,12 @@
         </template>
       </b-modal>
 
-      <b-modal title="Delete Race" ok-variant="danger" cancel-variant="primary"
+      <b-modal title="Delete Race" :ok-variant="btnTypeDelete" :cancel-variant="btnTypeCancel"
                @ok="deleteRace" v-model="boolDeleteConfirmModal">
-        <!--    using slots -- https://vuejs.org/v2/guide/components-slots.html
-  slot defined in b-modal -- https://bootstrap-vue.org/docs/components/modal#comp-ref-b-modal-slots
-  modify the buttons that appear in the footer of the modal using pre-defined slots-->
         <template #modal-cancel>
-          <!-- add a X icon to the cancel button-->
           <b-icon-x-octagon-fill /> Cancel
         </template>
-
         <template #modal-ok>
-          <!-- change the OK button to say Delete instead and add a trash can icon-->
           <b-icon-exclamation-triangle-fill /> Delete
         </template>
         Are you sure you want to delete {{ selDndRace.name }}?

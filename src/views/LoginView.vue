@@ -4,6 +4,14 @@
       <b-row align-h="center" class="mt-5">
         <b-col sm="8" md="6" lg="4">
           <b-card title="Login">
+            <!--            let the user know if they are already logged in based on the user id not being the default -->
+            <div class="my-4" v-html="userData.id === 0
+              ? 'You are not logged in'
+              : `You are already logged in<br><br>
+     Username is: ${userData.username}<br>
+     Access level is: ${userData.accessLevel}<br>
+     User id is: ${userData.id}`"></div>
+
             <b-form @submit.prevent="login">
               <b-form-group label="Username:" label-for="username">
                 <b-form-input
@@ -23,10 +31,8 @@
                   placeholder="Enter your password"
                 ></b-form-input>
               </b-form-group>
-              <b-button @click="logout" variant="danger">Log Out</b-button>
-              <b-button @click="checkAccount">User Info</b-button>
-              <b-button type="submit" variant="primary">Login</b-button>
-
+              <b-button @click="logout" :variant="btnTypeCancel">Log Out</b-button>
+              <b-button type="submit" :variant="btnTypeSubmit">Login</b-button>
             </b-form>
           </b-card>
         </b-col>
@@ -44,12 +50,6 @@ export default class LoginView extends Mixins(GlobalMixin) {
   userLogin = {
     username: '',
     password: '',
-  }
-
-  checkAccount() {
-    alert(`Your username is: ${this.userData.username}
-    \nYour access level is: ${this.userData.accessLevel}
-    \nYour user id is: ${this.userData.id}`);
   }
 
   // reset the userData to the default

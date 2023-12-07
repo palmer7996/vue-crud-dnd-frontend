@@ -49,6 +49,16 @@ export default class GlobalMixin extends Vue {
 
   USER_API = USER_API // for login
 
+  // using these variables to easily change variants for buttons, and check how bootswatch affects it
+  // also for consistency to not confuse a user
+  btnTypeCancel = 'warning'
+
+  btnTypeSubmit = 'success'
+
+  btnTypeDelete = 'danger'
+
+  btnTypeView = 'info' // for viewing characters, and potentially other miscellaneous stuff
+
   //-------------------------------------------------------
   // declare user property in here? could help with later fetch calls?
   // @Prop(User)

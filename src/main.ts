@@ -6,6 +6,7 @@ import router from './router';
 import store from './store';
 import 'bootswatch/dist/yeti/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'bootswatch/dist/superhero/bootstrap.min.css'; // Adjust the path based on the chosen theme
 
 Vue.config.productionTip = false;
 
