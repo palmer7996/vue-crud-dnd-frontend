@@ -254,6 +254,8 @@ export default class RaceView extends Mixins(GlobalMixin) {
         console.error(error.data[0]);
       })
       .finally(() => {
+        // remove edit button and deselect
+        this.toggleCreateOrEdit(true);
         // this.setBusy(false);
       });
   }
