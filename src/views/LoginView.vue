@@ -66,7 +66,7 @@ export default class LoginView extends Mixins(GlobalMixin) {
         this.saveUserData(data.accessLevel, data.token, data.id, data.username);
         alert(`Login as ${data.username} successful!\nYour user id is: ${data.id}\nYour access level is: ${data.accessLevel}`);
         if (data.accessLevel === 'read') {
-          alert('with read access you will not be able to edit the characters');
+          alert('with read access you will not be able to edit or create characters');
         }
         this.$router.push({ name: 'Character' }); // redirect after user successfully logs in
       })

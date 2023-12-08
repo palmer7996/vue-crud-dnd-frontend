@@ -52,7 +52,7 @@
           <b-button v-b-toggle.sidebar-right :variant="btnTypeView" @click="refreshCards(!boolDisplayUsersCharacter)">
             {{ boolDisplayUsersCharacter ? 'View All Characters' : 'View Your Characters' }}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
+            {{ boolDisplayCreateOrEdit ? "Create" : "Edit" }}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
 
@@ -134,7 +134,7 @@ export default class CharacterView extends Mixins(GlobalMixin) {
   async saveCharacterFromChild($event: any) {
     // this is the method that the characterForm emits to
     const tempCharacter:Character = $event;
-    console.log('This is the event');
+    console.log('This is the event from the saveCharacterFromChild method');
     console.log(tempCharacter);
 
     // need to do validation
@@ -150,21 +150,24 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     const requestType: string = tempCharacter.id ? 'PUT' : 'POST';
     this.callAPI(this.CHARACTER_API, requestType, tempCharacter) // returns a promise object
       .then((data) => {
-        console.log('data returned from api call');
-        console.log(data);
-
-        // determine if the character was added or updated
-        // this.$emit(tempCharacter === data.id ? 'updated' : 'added', data);
-        this.refreshCards(this.boolDisplayUsersCharacter);
+        console.log('this tempcharacter');
+        console.log(tempCharacter);
+        const addOrUpdate = tempCharacter.id === data.id ? 'update' : 'add';
+        if (addOrUpdate === 'update') {
+          this.handleUpdate(this.dndCharacters, tempCharacter);
+        } else {
+          this.refreshCards(this.boolDisplayUsersCharacter);
+        }
       })
       .catch((error) => {
-        this.violation = error.data || {};
+        this.violation = error.data || ViolationCharacter;
         console.error(error.data);
         this.displayErrorMsg(error);
       })
       .finally(() => {
         // assign selCharacter to the modified character without this if they edit then reopen to edit the tempCharacter is given an older version
-        this.selCharacter = tempCharacter;
+        this.selCharacter = new Character();
+        this.toggleCreateOrEdit(true); // since it unselects after clicking on it
         // this.setBusy(false);
         this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
@@ -176,13 +179,11 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     // this.setBusy(true);
     this.callAPI(`${this.CHARACTER_API}/${this.selCharacter.id}`, 'delete')
       .then((res) => {
+        this.handleDelete(this.dndCharacters, this.selCharacter.id);
         this.selCharacter = new Character();
-        // shouldn't need this in this case because the form isn't a child component
-        // this.$emit('deleted', this.tempCharacter);
-        this.refreshCards(this.boolDisplayUsersCharacter);
       })
       .catch((error) => {
-        this.violation = error.data || {};
+        // this.violation = error.data || ViolationCharacter;
         console.error(error.data);
         this.displayErrorMsg(error);
       })
@@ -193,7 +194,12 @@ export default class CharacterView extends Mixins(GlobalMixin) {
 
   displayErrorMsg(error:any) {
     console.log(error);
-    alert(error.data.error);
+    if (error.data.error === 'User with that token does not exist in the database') {
+      // want to modify the error message to be more understandable
+      alert('You cannot edit a character if you are not logged in');
+    } else {
+      alert(error.data.error);
+    }
   }
 
   selectCard(item : Character) {
@@ -204,10 +210,10 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     // Reset violation to get rid of displayed errors for now
     if (this.selCharacter.id === item.id) {
       this.selCharacter = new Character();
-      this.toggleDisplayCreate(true);
+      this.toggleCreateOrEdit(true);
     } else {
       this.selCharacter = Object.assign(new Character(), item);
-      this.toggleDisplayCreate(false);
+      this.toggleCreateOrEdit(false);
     }
     console.log(this.selCharacter);
   }
@@ -224,7 +230,7 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     return new Date(dateString).toLocaleDateString('en-US', options);
   }
 
-  // getting the data from the backend database
+  // getting the data from the backend database, used for the view your/all characters button
   async refreshCards(userSpecific:boolean) {
     this.boolDisplayUsersCharacter = userSpecific;
     if (userSpecific) {

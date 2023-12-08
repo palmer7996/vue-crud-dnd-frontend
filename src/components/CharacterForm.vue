@@ -186,11 +186,7 @@ b-modal -- https://bootstrap-vue.org/docs/components/modal#using-v-model-propert
     <b-button-group class="w-100 mb-3">
       <b-button :variant="btnTypeCancel" :disabled="isDisabled" @click="cancel">
         <b-icon-x-octagon-fill /> Cancel</b-button>
-      <!--    save button,  onclick call the saveStudent function
-        disabled prop is bound to the computed property 'isDisabled' -->
       <b-button :variant="btnTypeSubmit" :disabled="isDisabled" @click="saveCharacter">
-        <!--    use a cloud icon, add a ref (reference) to this icon as 'iconSave' so we can animate it when saveStudent is called
-            https://vuejs.org/v2/api/#ref -->
         <b-icon-person-plus-fill ref="iconSave" /> Save</b-button>
     </b-button-group>
 
@@ -227,7 +223,6 @@ import { ValidationError } from 'class-validator';
 export default class CharacterForm extends Mixins(GlobalMixin) {
   @Prop({ type: Character, validator: (s) => s instanceof Character }) readonly character!: Character
 
-  // this gives TypeError: cannot read properties of undefined (reading 'name')
   @Prop({ type: ViolationCharacter, validator: (s) => s instanceof ViolationCharacter }) readonly violation!: ViolationCharacter
   // violation = new ViolationCharacter()
 

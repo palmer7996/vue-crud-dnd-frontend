@@ -20,7 +20,7 @@
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
+            {{ boolDisplayCreateOrEdit ? "Create" : "Edit" }}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
@@ -171,12 +171,12 @@ export default class RaceView extends Mixins(GlobalMixin) {
     if (this.selDndRace.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndRace = new DndRace();
-      this.toggleDisplayCreate(true);
+      this.toggleCreateOrEdit(true);
     } else {
       // click on a card not selected
       // this.tempDndRace = item;
       this.selDndRace = Object.assign(new DndRace(), item);
-      this.toggleDisplayCreate(false);
+      this.toggleCreateOrEdit(false);
     }
     console.log(this.selDndRace);
   }
@@ -214,43 +214,47 @@ export default class RaceView extends Mixins(GlobalMixin) {
       console.log('validation failed');
       return;
     }
-    this.setBusy(true);
     // then just send it to the backend db
 
     this.callAPI(this.RACE_API, 'POST', this.selDndRace) // returns a promise object
       .then((data) => {
-        // determine if the race was added or updated
-        this.$emit(this.selDndRace.id === data.id ? 'updated' : 'added', data);
-        this.refreshCards();
+        const addOrUpdate = this.selDndRace.id === data.id ? 'update' : 'add';
+        if (addOrUpdate === 'update') {
+          // update
+          this.handleUpdate(this.dndRaces, this.selDndRace);
+        } else {
+          this.refreshCards();
+        }
       })
       .catch((error) => {
         this.violation = error.data || new ViolationDndRace();
         console.error(error.data[0]);
       })
       .finally(() => {
-        this.setBusy(false);
+        // remove edit button and deselect
+        this.toggleCreateOrEdit(true);
+        // clear form
+        this.selDndRace = new DndRace();
         this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
   }
 
   deleteRace() {
-    this.setBusy(true);
+    // this.setBusy(true);
     console.log(this.selDndRace);
     this.violation = new ViolationDndRace();// empty out violation messages
-
-    this.callAPI(`${this.RACE_API}/${this.selDndRace.id}`, 'delete')
+    const raceId = this.selDndRace.id;
+    this.callAPI(`${this.RACE_API}/${raceId}`, 'delete')
       .then((res) => {
+        this.handleDelete(this.dndRaces, raceId);
         this.selDndRace = new DndRace();
-        // shouldn't need this in this case because the form isn't a child component
-        // this.$emit('deleted', this.tempDndRace);
-        this.refreshCards();
       })
       .catch((error) => {
         this.violation = error.data || ViolationDndRace;
         console.error(error.data[0]);
       })
       .finally(() => {
-        this.setBusy(false);
+        // this.setBusy(false);
       });
   }
 

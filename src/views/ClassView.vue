@@ -21,7 +21,7 @@ or use components for them to reuse-->
       <div>
         <b-button-group class="fixed-bottom d-flex justify-content-between">
           <b-button v-b-toggle.sidebar-right :variant="btnTypeSubmit" @click="showCreateFormModal(true)">
-            {{ boolToggleDisplayCreate ? "Create" : "Edit"}}</b-button>
+            {{ boolDisplayCreateOrEdit ? "Create" : "Edit" }}</b-button>
           <b-button v-b-toggle.sidebar-right :variant="btnTypeDelete" @click="showDeleteConfirmModal(true)">
             Delete</b-button>
         </b-button-group>
@@ -134,12 +134,12 @@ export default class ClassView extends Mixins(GlobalMixin) {
     if (this.selDndClass.id === item.id) {
       // clicking on a card selected unselects it
       this.selDndClass = new DndClass();
-      this.toggleDisplayCreate(true);
+      this.toggleCreateOrEdit(true);
     } else {
       // click on a card not selected
       // this.tempDndClass = item;
       this.selDndClass = Object.assign(new DndClass(), item);
-      this.toggleDisplayCreate(false);
+      this.toggleCreateOrEdit(false);
     }
     console.log(this.selDndClass);
   }
@@ -177,44 +177,50 @@ export default class ClassView extends Mixins(GlobalMixin) {
       console.log('validation failed');
       return;
     }
-    this.setBusy(true);
     // then just send it to the backend db
     // after adjusting api can just do a post for edits and creates for ClassView and RaceView
 
     this.callAPI(this.CLASS_API, 'POST', this.selDndClass) // returns a promise object
       .then((data) => {
-        // determine if the class was added or updated
-        this.$emit(this.selDndClass.id === data.id ? 'updated' : 'added', data);
-        this.refreshCards();
+        const addOrUpdate = this.selDndClass.id === data.id ? 'update' : 'add';
+        if (addOrUpdate === 'update') {
+          // update
+          this.handleUpdate(this.dndClasses, this.selDndClass);
+        } else {
+          // addition won't work properly with selection
+          this.refreshCards();
+          // this.dndClasses.unshift(this.selDndClass);
+        }
       })
       .catch((error) => {
         this.violation = error.data || new ViolationDndClass();
         console.error(error.data[0]);
       })
       .finally(() => {
-        this.setBusy(false);
+        // remove edit button and deselect
+        this.toggleCreateOrEdit(true);
+        // clear form
+        this.selDndClass = new DndClass();
         this.showCreateFormModal(false); // hide the modal manually because we prevented default to show error message
       });
   }
 
   deleteClass() {
-    this.setBusy(true);
+    // this.setBusy(true);
     console.log(this.selDndClass);
     this.violation = new ViolationDndClass();// empty out violation messages
-
-    this.callAPI(`${this.CLASS_API}/${this.selDndClass.id}`, 'delete')
+    const classId = this.selDndClass.id;
+    this.callAPI(`${this.CLASS_API}/${classId}`, 'delete')
       .then((res) => {
+        this.handleDelete(this.dndClasses, classId);
         this.selDndClass = new DndClass();
-        // shouldn't need this in this case because the form isn't a child component
-        // this.$emit('deleted', this.tempDndClass);
-        this.refreshCards();
       })
       .catch((error) => {
         this.violation = error.data || ViolationDndClass;
         console.error(error.data[0]);
       })
       .finally(() => {
-        this.setBusy(false);
+        // this.setBusy(false);
       });
   }
 

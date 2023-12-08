@@ -36,21 +36,22 @@ export default class Character {
   @IsNotEmpty({ message: 'Age is Required' })
     age!: number
 
-  @IsIn(['Male', 'Female', 'Non-binary', 'Other'], { message: `Please choose between the options: ${genderArray.toString()}` })
-  @IsNotEmpty({ message: 'Gender is Required' })
-    gender!: string
+  // the @IsNotEmpty aren't needed for the below and aren't helpful
 
-  @IsNotEmpty({ message: 'Class is Required' })
+  @IsIn(['Male', 'Female', 'Non-binary', 'Other'], { message: `Please choose between the options: ${genderArray.toString()}` })
+  gender!: string
+
+  // @IsNotEmpty({ message: 'Class is Required' })
   // @IsIn(classArray, { message: 'Please choose between the options: ' })
   @Validate(isValidClassValue, ['class'])
     class!: string
 
-  @IsNotEmpty({ message: 'Race is Required' })
+  // @IsNotEmpty({ message: 'Race is Required' })
   // @IsIn(raceArray, { message: 'Please choose between the options: ' + raceArray.toString() })
   @Validate(isValidRaceValue, ['race'])
     race!: string
 
-  @IsNotEmpty({ message: 'Alignment is Required' })
+  // @IsNotEmpty({ message: 'Alignment is Required' })
   @IsIn(alignmentArray, { message: `Please choose between the options: ${alignmentArray.toString()}` })
     alignment!: string
 

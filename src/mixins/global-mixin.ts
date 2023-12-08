@@ -93,10 +93,10 @@ export default class GlobalMixin extends Vue {
 
   //-------------------------------------------------------
   // variables used by the views for creating and deleting elements
-  boolToggleDisplayCreate = true;
+  boolDisplayCreateOrEdit = true;
 
-  toggleDisplayCreate(bCreate:boolean) {
-    this.boolToggleDisplayCreate = bCreate;
+  toggleCreateOrEdit(bCreate:boolean) {
+    this.boolDisplayCreateOrEdit = bCreate;
   }
 
   boolCreateFormModal = false
@@ -104,11 +104,19 @@ export default class GlobalMixin extends Vue {
   boolDeleteConfirmModal = false;
 
   showCreateFormModal(bVal: boolean) {
-    this.boolCreateFormModal = bVal;
+    if (this.userData.accessLevel !== 'read') { // have buttons be unresponsive to users not logged in
+      this.boolCreateFormModal = bVal;
+    } else {
+      alert('only users with access level above read can make edits');
+    }
   }
 
   showDeleteConfirmModal(bVal : boolean) {
-    this.boolDeleteConfirmModal = bVal;
+    if (this.userData.accessLevel !== 'read') {
+      this.boolDeleteConfirmModal = bVal;
+    } else {
+      alert('only users with access level above read can make edits');
+    }
   }
 
   async provider(apiLink:string): Promise<any> {
@@ -117,6 +125,24 @@ export default class GlobalMixin extends Vue {
     const res = await fetch(apiLink);
     this.setBusy(false);
     return res.json();
+  }
+
+  handleDelete(array: any[], id:number) {
+    // splice out of the array using the id provided
+    console.log(array);
+    const index = array.findIndex((item) => item.id === id);
+    console.log(index);
+    if (index >= 0) {
+      array.splice(index, 1);
+    }
+  }
+
+  handleUpdate(array: any[], data:any) {
+    const index = array.findIndex((item) => item.id === data.id);
+    if (index !== -1) {
+      // eslint-disable-next-line no-param-reassign
+      array[index] = data;
+    }
   }
   //-------------------------------------------------------
 
@@ -154,7 +180,15 @@ export default class GlobalMixin extends Vue {
     // ensure valid/allowed request methods
     // eslint-disable-next-line no-param-reassign
     method = method.toUpperCase();
-    if (['POST', 'PUT', 'DELETE'].includes(method)) fetchOptions.method = method;
+    if (['POST', 'PUT', 'DELETE'].includes(method)) {
+      fetchOptions.method = method;
+      if (this.userData.accessLevel === 'read') {
+        // not implementing because despite being more efficient
+        // have already built around the error messages from the backend
+        // const error = new Error('403: Cannot edit with read access');
+        // throw Object.assign(error);
+      }
+    }
     // convert JS object to JSON string – GET request cannot have a body property so append it to the URL
     if (fetchOptions.method !== 'GET') fetchOptions.body = JSON.stringify(dataToSend);
     // eslint-disable-next-line no-param-reassign
@@ -169,11 +203,11 @@ export default class GlobalMixin extends Vue {
 
         const error = new Error(`${res.status}: ${res.statusText}`);
         resInfo.data = await res.json();
-        /*
+
         console.log('---Response info---');
+        console.log(error);
         console.log(resInfo);
         console.log('---Response info end---');
-        */
 
         throw Object.assign(error, resInfo);
       });
