@@ -41,6 +41,8 @@ export default class GlobalMixin extends Vue {
 
   CHARACTER_API = CHARACTER_API
 
+  CHARACTER_API_SORT_USERID = `${CHARACTER_API}/?sortby=userId`
+
   CHARACTER_USER_API = CHARACTER_USER_API;
 
   RACE_API = RACE_API
@@ -107,7 +109,7 @@ export default class GlobalMixin extends Vue {
     if (this.userData.accessLevel !== 'read') { // have buttons be unresponsive to users not logged in
       this.boolCreateFormModal = bVal;
     } else {
-      alert('only users with access level above read can make edits');
+      alert('only users with access level above read can create or edit characters');
     }
   }
 
@@ -115,7 +117,7 @@ export default class GlobalMixin extends Vue {
     if (this.userData.accessLevel !== 'read') {
       this.boolDeleteConfirmModal = bVal;
     } else {
-      alert('only users with access level above read can make edits');
+      alert('only users with access level above read can delete characters');
     }
   }
 
@@ -143,6 +145,12 @@ export default class GlobalMixin extends Vue {
       // eslint-disable-next-line no-param-reassign
       array[index] = data;
     }
+  }
+
+  displayErrorMsg(error:any) {
+    console.error(error.data);
+    console.log(error);
+    // alert(error.data.error);
   }
   //-------------------------------------------------------
 

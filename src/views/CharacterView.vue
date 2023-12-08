@@ -3,7 +3,7 @@
     <h1>Characters </h1>
     <h2>Total: {{count}}</h2>
     <div v-if="isBusy">Loading...</div>
-    <div v-else>
+    <div v-else class="mb-5">
       <b-row>
         <b-col v-for="item in dndCharacters" :key="item.id" lg="6" md="6" sm="12" class="mb-2">
           <b-card @click="selectCard(item)" :class="{'border-primary': selCharacter.id === item.id}">
@@ -150,8 +150,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     const requestType: string = tempCharacter.id ? 'PUT' : 'POST';
     this.callAPI(this.CHARACTER_API, requestType, tempCharacter) // returns a promise object
       .then((data) => {
-        console.log('this tempcharacter');
-        console.log(tempCharacter);
         const addOrUpdate = tempCharacter.id === data.id ? 'update' : 'add';
         if (addOrUpdate === 'update') {
           this.handleUpdate(this.dndCharacters, tempCharacter);
@@ -160,8 +158,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
         }
       })
       .catch((error) => {
-        this.violation = error.data || ViolationCharacter;
-        console.error(error.data);
         this.displayErrorMsg(error);
       })
       .finally(() => {
@@ -183,8 +179,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
         this.selCharacter = new Character();
       })
       .catch((error) => {
-        // this.violation = error.data || ViolationCharacter;
-        console.error(error.data);
         this.displayErrorMsg(error);
       })
       .finally(() => {
@@ -195,16 +189,6 @@ export default class CharacterView extends Mixins(GlobalMixin) {
       });
   }
 
-  displayErrorMsg(error:any) {
-    console.log(error);
-    if (error.data.error === 'User with that token does not exist in the database') {
-      // want to modify the error message to be more understandable
-      alert('You cannot edit a character if you are not logged in');
-    } else {
-      alert(error.data.error);
-    }
-  }
-
   selectCard(item : Character) {
     // toggle what displays under the create/edit button
 
@@ -212,8 +196,7 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     this.violation = new ViolationCharacter();
     // Reset violation to get rid of displayed errors for now
     if (this.selCharacter.id === item.id) {
-      this.selCharacter = new Character();
-      this.toggleCreateOrEdit(true);
+      this.clearSelection();
     } else {
       this.selCharacter = Object.assign(new Character(), item);
       this.toggleCreateOrEdit(false);
@@ -238,13 +221,20 @@ export default class CharacterView extends Mixins(GlobalMixin) {
     this.boolDisplayUsersCharacter = userSpecific;
     if (userSpecific) {
       await this.fetchFromBackend(`${this.CHARACTER_USER_API}/${this.userData.id}`);
+      // also deselect the character because they might have selected a character that is going to disapear
+      this.clearSelection();
     } else {
-      await this.fetchFromBackend(this.CHARACTER_API);
+      await this.fetchFromBackend(this.CHARACTER_API_SORT_USERID);
     }
   }
 
+  clearSelection() {
+    this.selCharacter = new Character();
+    this.toggleCreateOrEdit(true); // swap back to create because
+  }
+
   mounted() {
-    this.fetchFromBackend(this.CHARACTER_API);
+    this.fetchFromBackend(this.CHARACTER_API_SORT_USERID);
   }
 
   async fetchFromBackend(characterApi:string) {
@@ -252,9 +242,10 @@ export default class CharacterView extends Mixins(GlobalMixin) {
       const data = await this.provider(characterApi);
       this.dndCharacters = data.characters; // because api call returns count as well
       this.count = data.count;
+      console.log('Returned data from db call:');
       console.log(data);
     } catch (error) {
-      console.error('Error fetching characters:', error);
+      this.displayErrorMsg(error);
     }
   }
 }

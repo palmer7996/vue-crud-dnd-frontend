@@ -5,7 +5,7 @@ or use components for them to reuse-->
   <div>
     <h1>Classes</h1>
     <div v-if="isBusy">Loading...</div>
-    <div v-else>
+    <div v-else class="mb-5">
       <b-row>
         <b-col v-for="item in dndClasses" :key="item.id" lg="4" md="6" sm="12" class="mb-2">
           <b-card @click="selectCard(item)" :class="{'border-primary': selDndClass.id === item.id}">
