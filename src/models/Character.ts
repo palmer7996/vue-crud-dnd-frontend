@@ -32,26 +32,26 @@ export default class Character {
   @IsNotEmpty({ message: 'Name is Required' })
     name!: string
 
-  @Min(0, { message: 'Age must be at least 0' })
   @IsNotEmpty({ message: 'Age is Required' })
+  @Min(0, { message: 'Age must be at least 0' })
     age!: number
 
-  // the @IsNotEmpty aren't needed for the below and aren't helpful
+  // the ones that give a list of valid values won't disappear
+  // when user starts typing to make it easy for the user to copy from the valid list
 
-  @IsIn(['Male', 'Female', 'Non-binary', 'Other'], { message: `Please choose between the options: ${genderArray.toString()}` })
+  @IsNotEmpty({ message: 'Gender is Required' })
+  @IsIn(genderArray, { message: `Please choose between the options: ${genderArray.toString()}` })
   gender!: string
 
-  // @IsNotEmpty({ message: 'Class is Required' })
-  // @IsIn(classArray, { message: 'Please choose between the options: ' })
+  @IsNotEmpty({ message: 'Class is Required' })
   @Validate(isValidClassValue, ['class'])
     class!: string
 
-  // @IsNotEmpty({ message: 'Race is Required' })
-  // @IsIn(raceArray, { message: 'Please choose between the options: ' + raceArray.toString() })
+  @IsNotEmpty({ message: 'Race is Required' })
   @Validate(isValidRaceValue, ['race'])
     race!: string
 
-  // @IsNotEmpty({ message: 'Alignment is Required' })
+  @IsNotEmpty({ message: 'Alignment is Required' })
   @IsIn(alignmentArray, { message: `Please choose between the options: ${alignmentArray.toString()}` })
     alignment!: string
 

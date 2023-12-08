@@ -4,6 +4,7 @@
       <b-row align-h="center" class="mt-5">
         <b-col sm="8" md="6" lg="4">
           <b-card title="Login">
+            <!-- there is no way to sign up, must be give a username and password the server owner and get them to place in you the user database-->
             <!--            let the user know if they are already logged in based on the user id not being the default -->
             <div class="my-4" v-html="userData.id === 0
               ? 'You are not logged in, please log in to create a character'
@@ -33,6 +34,8 @@
               </b-form-group>
               <b-button @click="logout" :variant="btnTypeCancel">Log Out</b-button>
               <b-button type="submit" :variant="btnTypeSubmit">Login</b-button>
+              <p class="mt-5">Note: You cannot sign up,
+                if you do not have a pre-existing account you cannot create characters</p>
             </b-form>
           </b-card>
         </b-col>
