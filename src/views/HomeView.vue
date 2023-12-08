@@ -1,12 +1,17 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="../assets/dnd_logo.png" width="400">
+    <!--    <img alt="Vue logo" src="../assets/117898.jpg">-->
     <h1>Dnd Character Creator</h1>
-    <!--    <HelloWorld msg="Dnd Character Creator"/>-->
-    <!--    <IconButton icon="discord" @party="showMessage('THIS IS FUN')"
-                animation-style="spin" :animate="true">
-      Anther Fun Button</IconButton>-->
-
+    <h4>Please login to begin creating characters</h4>
+    <b-carousel controls
+                indicators>
+      <b-carousel-slide :img-src="require('@/assets/117898.jpg')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/117899.jpg')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/117900.jpg')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/117901.jpg')"></b-carousel-slide>
+      <b-carousel-slide :img-src="require('@/assets/117908.jpg')"></b-carousel-slide>
+    </b-carousel>
   </div>
 </template>
 
@@ -19,9 +24,6 @@ import GlobalMixin from '@/mixins/global-mixin'; // @ is an alias to /src
   },
 })
 export default class HomeView extends Mixins(GlobalMixin) {
-  // eslint-disable-next-line class-methods-use-this
-  showMessage(msg:string):void {
-    alert(msg);
-  }
+
 }
 </script>

@@ -6,7 +6,7 @@
           <b-card title="Login">
             <!--            let the user know if they are already logged in based on the user id not being the default -->
             <div class="my-4" v-html="userData.id === 0
-              ? 'You are not logged in'
+              ? 'You are not logged in, please log in to create a character'
               : `You are already logged in<br><br>
      Username is: ${userData.username}<br>
      Access level is: ${userData.accessLevel}<br>

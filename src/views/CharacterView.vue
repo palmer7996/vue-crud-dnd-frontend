@@ -188,6 +188,8 @@ export default class CharacterView extends Mixins(GlobalMixin) {
         this.displayErrorMsg(error);
       })
       .finally(() => {
+        // remove edit button and deselect
+        this.toggleCreateOrEdit(true);
         // this.setBusy(false);
       });
   }
